@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Progress.Domain\Progress.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Common\" />
   </ItemGroup>
 

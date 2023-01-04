@@ -1,5 +1,5 @@
-﻿using Progress.Application.Quests;
-using Progress.Domain.Entities;
+﻿using Progress.Application.Persistence.Entities;
+using Progress.Application.Quests;
 
 namespace Progress.Infrastructure.Persistence.Database
 {

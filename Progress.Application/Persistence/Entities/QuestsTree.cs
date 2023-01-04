@@ -1,6 +1,6 @@
-﻿using Progress.Domain.Common;
+﻿using Progress.Application.Persistence.Common;
 
-namespace Progress.Domain.Entities
+namespace Progress.Application.Persistence.Entities
 {
     public class QuestsTree : BaseEntity
     {

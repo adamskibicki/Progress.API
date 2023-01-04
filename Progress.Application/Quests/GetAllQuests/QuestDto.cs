@@ -1,4 +1,4 @@
-﻿using Progress.Domain.Entities;
+﻿using Progress.Application.Persistence.Entities;
 
 namespace Progress.Application.Quests.GetAllQuests
 {

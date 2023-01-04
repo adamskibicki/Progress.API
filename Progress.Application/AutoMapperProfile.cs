@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Progress.Application.Persistence.Entities;
 using Progress.Application.Quests.GetAllQuests;
-using Progress.Domain.Entities;
 
 namespace Progress.Application
 {
