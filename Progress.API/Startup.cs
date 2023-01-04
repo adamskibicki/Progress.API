@@ -1,5 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
+using Progress.Application;
 using Progress.Application.Persistence;
+using Progress.Application.Security;
 
 namespace Progress.API
 {
@@ -14,9 +16,10 @@ namespace Progress.API
 
         public void RegisterServices(IServiceCollection services)
         {
-            ConfigureServices.AddServices(services);
-            Application.Security.ConfigureServices.AddServices(services, Configuration);
-            Application.ConfigureServices.AddServices(services);
+            //TODO: change to passing specific class instance configurations below
+            services.AddPersistenceServices(Configuration);
+            services.AddSecurityServices(Configuration);
+            services.AddApplicationServices();
 
             services.AddControllers();
 

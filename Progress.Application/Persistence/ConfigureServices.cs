@@ -1,13 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Progress.Application.Quests;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Progress.Application.Persistence
 {
     public static class ConfigureServices
     {
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IQuestRepository, DummyQuestRepository>();
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("ProgressApiDatabase"), x=> x.MigrationsAssembly("Progress.Application"));
+            });
 
             return services;
         }

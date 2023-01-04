@@ -2,9 +2,9 @@
 
 namespace Progress.Application.Persistence.Entities
 {
-    public class QuestsTree : BaseEntity
+    public class Tree : BaseEntity<Guid>
     {
-        public Quest RootQuest { get; set; }
+        public List<Quest> Quests { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }

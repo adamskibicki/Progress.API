@@ -14,7 +14,7 @@ namespace Progress.Application.Security
 {
     public static class ConfigureServices
     {
-        public static void AddServices(this IServiceCollection services, IConfiguration configuration)
+        public static void AddSecurityServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<JSONWebTokensSettings>(configuration.GetSection("JSONWebTokensSettings"));
 

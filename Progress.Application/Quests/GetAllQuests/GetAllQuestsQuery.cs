@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Progress.Application.Persistence;
 
 namespace Progress.Application.Quests.GetAllQuests
 {
@@ -10,18 +13,22 @@ namespace Progress.Application.Quests.GetAllQuests
 
     public class GetAllQuestsQueryHandler : IRequestHandler<GetAllQuestsQuery, IEnumerable<QuestDto>>
     {
-        private readonly IQuestRepository questRepository;
         private readonly IMapper mapper;
+        private readonly ApplicationDbContext dbContext;
 
-        public GetAllQuestsQueryHandler(IQuestRepository questRepository, IMapper mapper)
+        public GetAllQuestsQueryHandler(IMapper mapper, ApplicationDbContext dbContext)
         {
-            this.questRepository = questRepository;
             this.mapper = mapper;
+            this.dbContext = dbContext;
         }
 
         public async Task<IEnumerable<QuestDto>> Handle(GetAllQuestsQuery request, CancellationToken cancellationToken)
         {
-            var quests = await questRepository.GetAllAsync(request.TreeId);
+            var quests = await dbContext
+                .Quests
+                .Where(t => t.Tree.Id == request.TreeId)
+                .ProjectTo<QuestDto>(mapper.ConfigurationProvider)
+                .ToArrayAsync();
 
             return mapper.Map<QuestDto[]>(quests);
         }
