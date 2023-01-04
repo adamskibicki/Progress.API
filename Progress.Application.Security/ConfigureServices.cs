@@ -5,13 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Progress.Application.Security.Contracts;
+using Progress.Application.Security.Managers;
 using Progress.Application.Security.Models;
-using Progress.Infrastructure.Security.Managers;
-using Progress.Infrastructure.Security.Models;
-using Progress.Infrastructure.Security.Services;
+using Progress.Application.Security.Services;
 using System.Text;
 
-namespace Progress.Infrastructure.Security
+namespace Progress.Application.Security
 {
     public static class ConfigureServices
     {

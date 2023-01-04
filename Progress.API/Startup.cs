@@ -14,7 +14,7 @@ namespace Progress.API
         public void RegisterServices(IServiceCollection services)
         {
             Infrastructure.Persistence.Database.ConfigureServices.AddServices(services);
-            Infrastructure.Security.ConfigureServices.AddServices(services, Configuration);
+            Application.Security.ConfigureServices.AddServices(services, Configuration);
             Application.ConfigureServices.AddServices(services);
 
             services.AddControllers();

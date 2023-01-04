@@ -1,8 +1,7 @@
 ﻿using Progress.Application.Security.Contracts;
 using Progress.Application.Security.Models;
-using Progress.Infrastructure.Security.Models;
 
-namespace Progress.Infrastructure.Security.Managers
+namespace Progress.Application.Security.Managers
 {
     public class SignInManager : ISignInManager<User>
     {

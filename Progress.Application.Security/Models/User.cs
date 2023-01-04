@@ -1,4 +1,4 @@
-﻿namespace Progress.Infrastructure.Security.Models
+﻿namespace Progress.Application.Security.Models
 {
     public class User
     {

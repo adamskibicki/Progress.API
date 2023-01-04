@@ -1,6 +1,6 @@
-﻿using Progress.Infrastructure.Security.Models;
+﻿using Progress.Application.Security.Models;
 
-namespace Progress.Infrastructure.Security
+namespace Progress.Application.Security
 {
     public class StaticUserList
     {

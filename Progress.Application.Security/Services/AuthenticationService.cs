@@ -2,12 +2,11 @@
 using Microsoft.IdentityModel.Tokens;
 using Progress.Application.Security.Contracts;
 using Progress.Application.Security.Models;
-using Progress.Infrastructure.Security.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Progress.Infrastructure.Security.Services
+namespace Progress.Application.Security.Services
 {
     public class AuthenticationService : IAuthenticationService
     {

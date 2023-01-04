@@ -1,9 +1,9 @@
-﻿using Progress.Application.Security.Contracts;
+﻿using Progress.Application.Security;
+using Progress.Application.Security.Contracts;
 using Progress.Application.Security.Models;
-using Progress.Infrastructure.Security.Models;
 using System.Security.Claims;
 
-namespace Progress.Infrastructure.Security.Managers
+namespace Progress.Application.Security.Managers
 {
     public class UserManager : IUserManager<User>
     {
