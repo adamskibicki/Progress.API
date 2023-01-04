@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using Progress.Application.Persistence;
 
 namespace Progress.API
 {
@@ -13,7 +14,7 @@ namespace Progress.API
 
         public void RegisterServices(IServiceCollection services)
         {
-            Infrastructure.Persistence.Database.ConfigureServices.AddServices(services);
+            ConfigureServices.AddServices(services);
             Application.Security.ConfigureServices.AddServices(services, Configuration);
             Application.ConfigureServices.AddServices(services);
 

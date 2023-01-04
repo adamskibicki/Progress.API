@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progress.API", "Progress.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progress.Application", "Progress.Application\Progress.Application.csproj", "{0C92DCC3-3748-49FB-BC39-7F61D0353E1F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progress.Infrastructure.Persistence.Database", "Progress.Infrastructure.Persistence.Database\Progress.Infrastructure.Persistence.Database.csproj", "{939382AD-771D-4FEA-B256-5A2CF2D94A57}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progress.Application.Security", "Progress.Application.Security\Progress.Application.Security.csproj", "{B00F24AC-3109-454A-B43F-5B568AE4715A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +21,6 @@ Global
 		{0C92DCC3-3748-49FB-BC39-7F61D0353E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C92DCC3-3748-49FB-BC39-7F61D0353E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C92DCC3-3748-49FB-BC39-7F61D0353E1F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{939382AD-771D-4FEA-B256-5A2CF2D94A57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{939382AD-771D-4FEA-B256-5A2CF2D94A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{939382AD-771D-4FEA-B256-5A2CF2D94A57}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{939382AD-771D-4FEA-B256-5A2CF2D94A57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B00F24AC-3109-454A-B43F-5B568AE4715A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B00F24AC-3109-454A-B43F-5B568AE4715A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B00F24AC-3109-454A-B43F-5B568AE4715A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B00F24AC-3109-454A-B43F-5B568AE4715A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

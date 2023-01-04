@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Progress.Application.Quests;
 
-namespace Progress.Infrastructure.Persistence.Database
+namespace Progress.Application.Persistence
 {
     public static class ConfigureServices
     {

@@ -1,7 +1,7 @@
 ﻿using Progress.Application.Persistence.Entities;
 using Progress.Application.Quests;
 
-namespace Progress.Infrastructure.Persistence.Database
+namespace Progress.Application
 {
     /// <summary>
     /// Only for testing purposes
@@ -44,7 +44,7 @@ namespace Progress.Infrastructure.Persistence.Database
         private void ConnectParentAndChildren(Quest parent, List<Quest> children)
         {
             parent.Descendants = children;
-            foreach(Quest child in children)
+            foreach (Quest child in children)
             {
                 child.Parent = parent;
             }

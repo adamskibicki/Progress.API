@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Progress.Application.Security\Progress.Application.Security.csproj" />
     <ProjectReference Include="..\Progress.Application\Progress.Application.csproj" />
-    <ProjectReference Include="..\Progress.Infrastructure.Persistence.Database\Progress.Infrastructure.Persistence.Database.csproj" />
   </ItemGroup>
 
 </Project>
