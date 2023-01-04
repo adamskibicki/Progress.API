@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Progress.Application.Persistence;
 
-namespace Progress.Application.Trees.AddTestTree
+namespace Progress.Application.Usecases.Trees.AddTestTree
 {
     public class AddTestTreeCommand : IRequest<bool>
     {

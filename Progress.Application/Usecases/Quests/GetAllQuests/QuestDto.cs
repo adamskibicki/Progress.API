@@ -1,6 +1,6 @@
 ﻿using Progress.Application.Persistence.Entities;
 
-namespace Progress.Application.Quests.GetAllQuests
+namespace Progress.Application.Usecases.Quests.GetAllQuests
 {
     public class QuestDto
     {

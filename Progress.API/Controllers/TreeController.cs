@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Progress.Application.Trees.AddTestTree;
+using Progress.Application.Usecases.Trees.AddTestTree;
 
 namespace Progress.API.Controllers
 {

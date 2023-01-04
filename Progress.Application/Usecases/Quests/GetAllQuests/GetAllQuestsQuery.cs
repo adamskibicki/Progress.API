@@ -4,9 +4,9 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence;
 
-namespace Progress.Application.Quests.GetAllQuests
+namespace Progress.Application.Usecases.Quests.GetAllQuests
 {
-    public class GetAllQuestsQuery: IRequest<IEnumerable<QuestDto>>
+    public class GetAllQuestsQuery : IRequest<IEnumerable<QuestDto>>
     {
         public Guid TreeId { get; set; }
     }

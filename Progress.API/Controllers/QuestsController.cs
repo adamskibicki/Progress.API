@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Progress.Application;
-using Progress.Application.Quests.GetAllQuests;
+using Progress.Application.Usecases.Quests.GetAllQuests;
 
 namespace Progress.API.Controllers
 {
