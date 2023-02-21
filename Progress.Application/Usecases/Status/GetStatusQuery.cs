@@ -83,6 +83,64 @@ namespace Progress.Application.Usecases.Status
                     {
                         Name = "The Cosmic Immortal",
                         Level = 1004,
+                        Modifiers = new ClassModifierDto[]
+                        {
+                            new ClassModifierDto()
+                            {
+                                Description = "Body enhancement magic is improved by 500%",
+                                Category = CategoriesCollection.BodyEnhancement,
+                                PercentagePointsOfCategoryIncrease = 500
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "All healing magic skills are improved by 500%",
+                                Category = CategoriesCollection.HealingMagic,
+                                PercentagePointsOfCategoryIncrease = 500
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "All cosmic magic skills are improved by 250%",
+                                Category = CategoriesCollection.CosmicMagic,
+                                PercentagePointsOfCategoryIncrease = 250
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Natural health regeneration is increased by 1% per minute",
+                                PercentagePointsOfCategoryIncrease = 0
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Natural mana regeneration is increased by 1% per minute",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Food, water and sleep needed to sustain yourself are no longer required",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "You do not age",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Your mana capacity is multiplied by five",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "You can absorb and use 25% of the ambient mana around you",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "All mana regeneration increases by 1% to a maximum of 100% for every second you are not hit by an enemy attack",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Excess generated mana instead charges a second mana pool equaling your total health [0/125400]. Mana from this pool can be transferred into your main mana pool at will",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "You may infuse any barrier, wall, or magical armor with cosmic energy",
+                            }
+                        },
                         Skills = new SkillDto[]
                         {
                             new SkillDto()
@@ -133,15 +191,32 @@ namespace Progress.Application.Usecases.Status
                                 Type = SkillType.Active,
                                 TierDescriptions = new string[]
                                 {
-                                    "Your body glows with the power of the cosmos, increasing your resilience, speed, Intelligence, and Strength by 100% [1250%].",
+                                    "Your body glows with the power of the cosmos, increasing your resilience, speed, Intelligence, and Strength by <stats_increase>.",
                                     "Your sight, hearing and sense of smell is also affected by Embodiment of the Arcane.",
-                                    "You are one with the Arcane. The skill’s upkeep has been removed. A static 25% of the base effect is applied to Wisdom. Does not affect the mana regeneration properties of the Wisdom stat."
+                                    "You are one with the Arcane. The skill’s upkeep has been removed. A static <wisdom_increase> of the base effect is applied to Wisdom. Does not affect the mana regeneration properties of the Wisdom stat."
                                 },
                                 Categories = new CategoryDto[]
                                 {
                                     CategoriesCollection.Aura,
                                     CategoriesCollection.BodyEnhancement,
                                     CategoriesCollection.CosmicMagic
+                                },
+                                Variables = new SkillVariableDto[]
+                                {
+                                    new SkillVariableDto()
+                                    {
+                                        Name = "stats_increase",
+                                        BaseValue = 100,
+                                        Unit = "%",
+                                        CategoryCalculationType = CategoryCalculationType.Multiplicative
+                                    },
+                                    new SkillVariableDto()
+                                    {
+                                        Name = "wisdom_increase",
+                                        BaseValue = 25,
+                                        Unit = "%",
+                                        CategoryCalculationType = CategoryCalculationType.Static
+                                    }
                                 }
                             },
                             new SkillDto()
@@ -282,6 +357,48 @@ namespace Progress.Application.Usecases.Status
                     {
                         Name = "The Pyroclastic Storm",
                         Level = 1001,
+                        Modifiers = new ClassModifierDto[]
+                        {
+                            new ClassModifierDto()
+                            {
+                                Description = "Body enhancement magic is improved by 500%",
+                                Category = CategoriesCollection.BodyEnhancement,
+                                PercentagePointsOfCategoryIncrease = 500
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "All Ashen magic skills are improved by 500%",
+                                Category = CategoriesCollection.AshenMagic,
+                                PercentagePointsOfCategoryIncrease = 500
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "All Fire magic skills are improved by 250%",
+                                Category = CategoriesCollection.FireMagic,
+                                PercentagePointsOfCategoryIncrease = 250
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "All fighting styles using hand to hand combat are more refined",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Your will is ash and heat",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "You cannot be stunned by enemy attacks",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Your bones and muscles have vastly increased density",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Your heat generation is increased by 1000%",
+                            },
+
+                        },
                         Skills = new SkillDto[]
                         {
                             new SkillDto()
@@ -484,6 +601,79 @@ namespace Progress.Application.Usecases.Status
                     {
                         Name = "The Sunforged Realmwalker",
                         Level = 1002,
+                        Modifiers = new ClassModifierDto[]
+                        {
+                            new ClassModifierDto()
+                            {
+                                Description = "Space Magic is improved by 500%",
+                                Category = CategoriesCollection.SpaceMagic,
+                                PercentagePointsOfCategoryIncrease = 500
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Resilience is increased by 500%",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Body Enhancement Magic is improved by 300%",
+                                Category = CategoriesCollection.BodyEnhancement,
+                                PercentagePointsOfCategoryIncrease = 300
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Fire Magic is improved by 200%",
+                                Category = CategoriesCollection.FireMagic,
+                                PercentagePointsOfCategoryIncrease = 200
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Flesh Magic is improved by 100%",
+                                Category = CategoriesCollection.FleshMagic,
+                                PercentagePointsOfCategoryIncrease = 100
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Healing Magic is improved by 100%",
+                                Category = CategoriesCollection.HealingMagic,
+                                PercentagePointsOfCategoryIncrease = 100
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Mind Magic is improved by 100%",
+                                Category = CategoriesCollection.MindMagic,
+                                PercentagePointsOfCategoryIncrease = 100
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Ice Magic is improved by 100%",
+                                Category = CategoriesCollection.IceMagic,
+                                PercentagePointsOfCategoryIncrease = 100
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Lava Magic is improved by 100%",
+                                Category = CategoriesCollection.LavaMagic,
+                                PercentagePointsOfCategoryIncrease = 100
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Earth Magic is improved by 100%",
+                                Category = CategoriesCollection.EarthMagic,
+                                PercentagePointsOfCategoryIncrease = 100
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Your Soul has been strengthened by the Primordial Flame",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Your skin grows more resilient",
+                            },
+                            new ClassModifierDto()
+                            {
+                                Description = "Greatly increases the heat you can store within your body and soul",
+                            },
+                        },
                         Skills = new SkillDto[]
                         {
                             new SkillDto()
@@ -662,6 +852,31 @@ namespace Progress.Application.Usecases.Status
         public static CategoryDto SpaceMagic { get; set; } = new CategoryDto()
         {
             Name = "Space Magic",
+            Id = Guid.NewGuid()
+        };
+        public static CategoryDto FleshMagic { get; set; } = new CategoryDto()
+        {
+            Name = "Flesh Magic",
+            Id = Guid.NewGuid()
+        };
+        public static CategoryDto MindMagic { get; set; } = new CategoryDto()
+        {
+            Name = "Mind Magic",
+            Id = Guid.NewGuid()
+        };
+        public static CategoryDto IceMagic { get; set; } = new CategoryDto()
+        {
+            Name = "Ice Magic",
+            Id = Guid.NewGuid()
+        };
+        public static CategoryDto LavaMagic { get; set; } = new CategoryDto()
+        {
+            Name = "Lava Magic",
+            Id = Guid.NewGuid()
+        };
+        public static CategoryDto EarthMagic { get; set; } = new CategoryDto()
+        {
+            Name = "Earth Magic",
             Id = Guid.NewGuid()
         };
     }

@@ -41,6 +41,23 @@ namespace Progress.Application.Usecases.Status
         public SkillType Type { get; set; }
         public CategoryDto[] Categories { get; set; }
         public bool Enhanced { get; set; }
+        public SkillVariableDto[] Variables { get; set; }
+    }
+
+    public class SkillVariableDto
+    {
+        public string Name { get; set; }
+        public int BaseValue { get; set; }
+        public string Unit { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CategoryCalculationType CategoryCalculationType { get; set; }
+    }
+
+    public enum CategoryCalculationType
+    {
+        Multiplicative,
+        Reciprocal,
+        Static
     }
 
     public enum SkillType
