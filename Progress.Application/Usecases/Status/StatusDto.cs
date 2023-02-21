@@ -1,4 +1,7 @@
-﻿namespace Progress.Application.Usecases.Status
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Progress.Application.Usecases.Status
 {
     public class StatusDto
     {
@@ -11,7 +14,21 @@
     {
         public string Name { get; set; }
         public int Level { get; set; }
+        public ClassModifierDto[] Modifiers { get; set; }
         public SkillDto[] Skills { get; set; }
+    }
+
+    public class ClassModifierDto
+    {
+        public string Description { get; set; }
+        public CategoryDto Category { get; set; }
+        public int PercentagePointsOfCategoryIncrease { get; set; }
+    }
+
+    public class CategoryDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 
     public class SkillDto
@@ -20,8 +37,9 @@
         public int Level { get; set; }
         public int Tier { get; set; }
         public string[] TierDescriptions { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public SkillType Type { get; set; }
-        public string[] Categories { get; set; }
+        public CategoryDto[] Categories { get; set; }
         public bool Enhanced { get; set; }
     }
 

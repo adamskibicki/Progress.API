@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using Progress.Application;
 using Progress.Application.Persistence;
 using Progress.Application.Security;
@@ -21,7 +22,11 @@ namespace Progress.API
             services.AddSecurityServices(Configuration);
             services.AddApplicationServices();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                });
 
             services.AddCors(options =>
             {
