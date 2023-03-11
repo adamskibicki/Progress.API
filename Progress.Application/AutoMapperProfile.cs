@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Progress.Application.Persistence.Entities;
-using Progress.Application.Usecases.Quests.GetAllQuests;
 
 namespace Progress.Application
 {
@@ -8,7 +6,6 @@ namespace Progress.Application
     {
         public AutoMapperProfile()
         {
-            CreateMap<Quest, QuestDto>();
         }
     }
 }
