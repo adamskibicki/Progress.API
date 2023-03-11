@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using Progress.API.Middlewares;
 using Progress.Application;
 using Progress.Application.Persistence;
 using Progress.Application.Security;
@@ -21,6 +22,8 @@ namespace Progress.API
             services.AddPersistenceServices(Configuration);
             services.AddSecurityServices(Configuration);
             services.AddApplicationServices();
+
+            services.AddTransient<ExceptionHandlingMiddleware>();
 
             services.AddControllers()
                 .AddNewtonsoftJson(options =>
@@ -89,6 +92,8 @@ namespace Progress.API
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
+
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

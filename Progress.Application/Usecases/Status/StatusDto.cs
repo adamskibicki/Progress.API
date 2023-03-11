@@ -23,12 +23,16 @@ namespace Progress.Application.Usecases.Status
         public string Description { get; set; }
         public CategoryDto Category { get; set; }
         public int PercentagePointsOfCategoryIncrease { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public CategoryCalculationType CategoryCalculationType { get; set; }
+        public string AffectedResourceName { get; set; }
     }
 
     public class CategoryDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public string DisplayColor { get; set; }
     }
 
     public class SkillDto
@@ -49,15 +53,36 @@ namespace Progress.Application.Usecases.Status
         public string Name { get; set; }
         public int BaseValue { get; set; }
         public string Unit { get; set; }
+        /// <summary>
+        /// How it affects other calculations
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public CategoryCalculationType CategoryCalculationType { get; set; }
+        public string BaseVariableName { get; set; }
+        public string[] AffectedStatNames { get; set; }
+        /// <summary>
+        /// How variable is calculated itself
+        /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
+        public VariableCalculationType VariableCalculationType { get; set; }
+    }
+
+    public enum VariableCalculationType
+    {
+        None,
+        Additive,
+        Reciprocal,
+        StaticAdditiveOtherVariableBased
     }
 
     public enum CategoryCalculationType
     {
-        Multiplicative,
+        None,
+        Additive,
         Reciprocal,
-        Static
+        StaticAdditiveOtherVariableBased,
+        Multiplicative,
+        MultiplicativeWithBaseAdded
     }
 
     public enum SkillType
@@ -69,9 +94,17 @@ namespace Progress.Application.Usecases.Status
     public class GeneralInformationDto
     {
         public BasicInformationDto BasicInfo { get; set; }
-        public ResourcesStatusDto ResourcesStatus { get; set; }
         public StatsDto Stats { get; set; }
         public UnspentSkillpointsDto Skillpoints { get; set; }
+        public ResourceDto[] Resources { get; set; }
+    }
+
+    public class ResourceDto
+    {
+        public string DisplayName { get; set; }
+        public string CalculationName { get; set; }
+        public string BaseStatName { get; set; }
+        public int ResourcePointsPerBaseStatPoint { get; set; }
     }
 
     public class UnspentSkillpointsDto
@@ -92,13 +125,6 @@ namespace Progress.Application.Usecases.Status
     {
         public string Name { get; set; }
         public int Value { get; set; }
-    }
-
-    public class ResourcesStatusDto
-    {
-        public int MaxHealth { get; set; }
-        public int MaxStamina { get; set; }
-        public int MaxMana { get; set; }
     }
 
     public class BasicInformationDto

@@ -26,11 +26,36 @@ namespace Progress.Application.Usecases.Status
                         Name = "Ilea Spears",
                         Title = "Dragonslayer"
                     },
-                    ResourcesStatus = new ResourcesStatusDto()
+                    Resources = new ResourceDto[]
                     {
-                        MaxHealth = 1500000,
-                        MaxMana = 2000000,
-                        MaxStamina = 60000
+                        new ResourceDto()
+                        {
+                            DisplayName = "Health",
+                            CalculationName = "Health",
+                            BaseStatName = "Vitality",
+                            ResourcePointsPerBaseStatPoint = 10
+                        },
+                        new ResourceDto()
+                        {
+                            DisplayName = "Stamina",
+                            CalculationName = "Stamina",
+                            BaseStatName = "Endurance",
+                            ResourcePointsPerBaseStatPoint = 10
+                        },
+                        new ResourceDto()
+                        {
+                            DisplayName = "Mana",
+                            CalculationName = "Mana",
+                            BaseStatName = "Wisdom",
+                            ResourcePointsPerBaseStatPoint = 10
+                        },
+                        new ResourceDto()
+                        {
+                            DisplayName = "Mana (Essence)",
+                            CalculationName = "Health",
+                            BaseStatName = "Vitality",
+                            ResourcePointsPerBaseStatPoint = 10
+                        },
                     },
                     Skillpoints = new UnspentSkillpointsDto()
                     {
@@ -47,7 +72,7 @@ namespace Progress.Application.Usecases.Status
                             new StatDto()
                             {
                                 Name = "Vitality",
-                                Value = 3300
+                                Value = 3800
                             },
                             new StatDto()
                             {
@@ -57,22 +82,22 @@ namespace Progress.Application.Usecases.Status
                             new StatDto()
                             {
                                 Name = "Strength",
-                                Value = 600
+                                Value = 860
                             },
                             new StatDto()
                             {
                                 Name = "Dexterity",
-                                Value = 600
+                                Value = 610
                             },
                             new StatDto()
                             {
                                 Name = "Intelligence",
-                                Value = 3300
+                                Value = 3770
                             },
                             new StatDto()
                             {
                                 Name = "Wisdom",
-                                Value = 3600
+                                Value = 4000
                             }
                         }
                     }
@@ -123,6 +148,9 @@ namespace Progress.Application.Usecases.Status
                             new ClassModifierDto()
                             {
                                 Description = "Your mana capacity is multiplied by five",
+                                PercentagePointsOfCategoryIncrease = 500,
+                                CategoryCalculationType = CategoryCalculationType.Multiplicative,
+                                AffectedResourceName = "Mana"
                             },
                             new ClassModifierDto()
                             {
@@ -208,14 +236,19 @@ namespace Progress.Application.Usecases.Status
                                         Name = "stats_increase",
                                         BaseValue = 100,
                                         Unit = "%",
-                                        CategoryCalculationType = CategoryCalculationType.Multiplicative
+                                        CategoryCalculationType = CategoryCalculationType.Additive,
+                                        VariableCalculationType = VariableCalculationType.Additive,
+                                        AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength" }
                                     },
                                     new SkillVariableDto()
                                     {
                                         Name = "wisdom_increase",
                                         BaseValue = 25,
                                         Unit = "%",
-                                        CategoryCalculationType = CategoryCalculationType.Static
+                                        BaseVariableName = "stats_increase",
+                                        CategoryCalculationType = CategoryCalculationType.Additive,
+                                        VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
+                                        AffectedStatNames = new string[] { "Wisdom" }
                                     }
                                 }
                             },
@@ -429,7 +462,7 @@ namespace Progress.Application.Usecases.Status
                                 Type = SkillType.Active,
                                 TierDescriptions = new string[]
                                 {
-                                    "Heat glows within you, raising your resilience, speed, Strength, Intelligence and Dexterity by 100% [1850%]. Your learn how to generate and store vast amounts of heat within your Draconic Core or your magical constructs.",
+                                    "Heat glows within you, raising your resilience, speed, Strength, Intelligence and Dexterity by <stats_increase>. Your learn how to generate and store vast amounts of heat within your Draconic Core or your magical constructs.",
                                     "The longer you fight with Draconic Core active, the deeper it roots. Each second of fighting adds 1% more power to the skill with a maximum of a static [250%]. Once no longer engaged in battle, 1% of additionally generated power is lost per second.",
                                     "Familiarity with the skill removes its upkeep. You can choose to increase your weight by 1% [18.5%] for each passing second to a maximum of a static [1500%], increasing your natural health regeneration, heat generation, and resilience by the same factor."
                                 },
@@ -439,6 +472,18 @@ namespace Progress.Application.Usecases.Status
                                     CategoriesCollection.BodyEnhancement,
                                     CategoriesCollection.AshenMagic,
                                     CategoriesCollection.FireMagic
+                                },
+                                Variables = new SkillVariableDto[]
+                                {
+                                    new SkillVariableDto()
+                                    {
+                                        Name = "stats_increase",
+                                        BaseValue = 100,
+                                        Unit = "%",
+                                        CategoryCalculationType = CategoryCalculationType.Additive,
+                                        VariableCalculationType = VariableCalculationType.Additive, 
+                                        AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength", "Dexterity" }
+                                    }
                                 }
                             },
                             new SkillDto()
@@ -546,8 +591,8 @@ namespace Progress.Application.Usecases.Status
                                 Type = SkillType.Passive,
                                 TierDescriptions = new string[]
                                 {
-                                    "Increases your reflexes and speed by 75% [1387.5%]. Your ability to avoid damage to your vitals when dodging increases. A static 25% of this bonus is applied to Vitality.",
-                                    "Your muscles grow more dense. For each Resistance skill your body becomes tougher. First tier Resistances equal a static 5% increase, second tier equal a static 10% increase, third tier equal a static 15% increase [625%]. Additionally affects your stamina.",
+                                    "Increases your reflexes and speed by <stats_increase>. Your ability to avoid damage to your vitals when dodging increases. A static <vitality_increase> of this bonus is applied to Vitality.",
+                                    "Your muscles grow more dense. For each Resistance skill your body becomes tougher. First tier Resistances equal a static 5% increase, second tier equal a static 10% increase, third tier equal a static 15% increase [<endurance_increase>]. Additionally affects your endurance.",
                                     "You can choose to allow magic damage to bypass your related resistance skills. If this effect is active, any absorption abilities related to such magic damage is increased. Effect is canceled automatically upon reaching 50% of your health. Each Resistance skill in the second tier or higher increases your heat generation and the potential density of your created ash and volcanic glass by a static 5% [225%]. Each Resistance skill in the third tier increases the speed of your created projectiles by 10% [260%]."
                                 },
                                 Categories = new CategoryDto[]
@@ -555,6 +600,37 @@ namespace Progress.Application.Usecases.Status
                                     CategoriesCollection.BodyEnhancement,
                                     CategoriesCollection.AshenMagic,
                                     CategoriesCollection.FireMagic
+                                },
+                                Variables = new SkillVariableDto[]
+                                {
+                                    new SkillVariableDto()
+                                    {
+                                        Name = "stats_increase",
+                                        BaseValue = 75,
+                                        Unit = "%",
+                                        CategoryCalculationType = CategoryCalculationType.Additive,
+                                        VariableCalculationType = VariableCalculationType.Additive, 
+                                        AffectedStatNames = new string[] { "Reflexes", "Speed" }
+                                    },
+                                    new SkillVariableDto()
+                                    {
+                                        Name = "vitality_increase",
+                                        BaseValue = 25,
+                                        Unit = "%",
+                                        BaseVariableName = "stats_increase",
+                                        CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
+                                        VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
+                                        AffectedStatNames = new string[] { "Vitality" }
+                                    },
+                                    new SkillVariableDto()
+                                    {
+                                        Name = "endurance_increase",
+                                        BaseValue = 625,
+                                        Unit = "%",
+                                        CategoryCalculationType = CategoryCalculationType.Additive,
+                                        VariableCalculationType = VariableCalculationType.None,
+                                        AffectedStatNames = new string[] { "Endurance" }
+                                    }
                                 }
                             },
                             new SkillDto()
@@ -745,8 +821,8 @@ namespace Progress.Application.Usecases.Status
                                 Type = SkillType.Active,
                                 TierDescriptions = new string[]
                                 {
-                                    "The Primordial Flame flows through your veins, increasing your resilience by 75% [1762.5%]. Increases your physical damage resistance by 15% [352.5%]. Increases your magic damage resistance by 15% [352.5%]. You won’t be fazed anymore by heavy damage or powerful sources of light and sound. Your natural regeneration can heal any injury.",
-                                    "Your body has withstood incredible damage, endured the hardships of battle. The fires flowing through you have hardened your bones and muscles. Your health is increased by 35% [822.5%].",
+                                    "The Primordial Flame flows through your veins, increasing your resilience by <resilience_increase> 75% [1762.5%]. Increases your physical damage resistance by 15% [352.5%]. Increases your magic damage resistance by 15% [352.5%]. You won’t be fazed anymore by heavy damage or powerful sources of light and sound. Your natural regeneration can heal any injury.",
+                                    "Your body has withstood incredible damage, endured the hardships of battle. The fires flowing through you have hardened your bones and muscles. Your health is increased by <vitality_increase> 35% [822.5%].",
                                     "Your ability to adapt to your enemy grows. Continued battle against the same foe or species of monster increases damage reduction against their attacks by 2.5% [58.75%] per minute to a maximum of a static 50%. This effect will remain even after a battle has ended. The Cosmic Shape is released should you reach low health [0.1% - set value]. Your mana [100% - set value] will be used to create both spatial shields and the Primordial Flame to prevent death. This effect can only occur once every three hours."
                                 },
                                 Categories = new CategoryDto[]
@@ -754,6 +830,27 @@ namespace Progress.Application.Usecases.Status
                                     CategoriesCollection.BodyEnhancement,
                                     CategoriesCollection.SpaceMagic,
                                     CategoriesCollection.FireMagic
+                                },
+                                Variables = new SkillVariableDto[]
+                                {
+                                    new SkillVariableDto()
+                                    {
+                                        BaseValue = 75,
+                                        AffectedStatNames = new string[] { "Resilience" },
+                                        CategoryCalculationType = CategoryCalculationType.Additive,
+                                        VariableCalculationType = VariableCalculationType.Additive,
+                                        Name = "resilience_increase",
+                                        Unit = "%",
+                                    },
+                                    new SkillVariableDto()
+                                    {
+                                        BaseValue = 35,
+                                        AffectedStatNames = new string[] { "Vitality" },
+                                        CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
+                                        VariableCalculationType = VariableCalculationType.Additive,
+                                        Name = "vitality_increase",
+                                        Unit = "%", 
+                                    }
                                 }
                             },
                             new SkillDto()
