@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Progress.Application.Persistence;
 
@@ -11,9 +12,11 @@ using Progress.Application.Persistence;
 namespace Progress.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230327085722_AddCharacterStatusesAndResources")]
+    partial class AddCharacterStatusesAndResources
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,9 +140,6 @@ namespace Progress.Application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("UnspentStatpoints")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("CharacterStatuses");
@@ -147,8 +147,7 @@ namespace Progress.Application.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                            UnspentStatpoints = 25
+                            Id = new Guid("afa42078-a071-4bea-978e-f439c713848c")
                         });
                 });
 
@@ -218,72 +217,6 @@ namespace Progress.Application.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Progress.Application.Persistence.Entities.Stat", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CharacterStatusId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterStatusId");
-
-                    b.ToTable("Stats");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1bf1d8dd-7cc3-486d-bb26-0bde4ee439df"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                            Name = "Vitality",
-                            Value = 3800
-                        },
-                        new
-                        {
-                            Id = new Guid("ab85915d-e66f-4460-96af-e90f171ccab5"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                            Name = "Endurance",
-                            Value = 600
-                        },
-                        new
-                        {
-                            Id = new Guid("de4b423f-4718-4e26-9d75-14f4a1581b37"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                            Name = "Strength",
-                            Value = 860
-                        },
-                        new
-                        {
-                            Id = new Guid("20cce93e-f883-4860-be2f-4cdbd0c6e3be"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                            Name = "Dexterity",
-                            Value = 610
-                        },
-                        new
-                        {
-                            Id = new Guid("047e7614-496d-4519-a784-6dec5e753571"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                            Name = "Intelligence",
-                            Value = 3770
-                        },
-                        new
-                        {
-                            Id = new Guid("c6474033-2e4c-4805-95f3-4fe22e9de88a"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                            Name = "Wisdom",
-                            Value = 4000
-                        });
-                });
-
             modelBuilder.Entity("Progress.Application.Persistence.Entities.CharacterStatus", b =>
                 {
                     b.OwnsOne("Progress.Application.Persistence.Entities.BasicInformation", "BasicInformation", b1 =>
@@ -314,44 +247,7 @@ namespace Progress.Application.Migrations
                                 });
                         });
 
-                    b.OwnsOne("Progress.Application.Persistence.Entities.UnspentSkillpoints", "UnspentSkillpoints", b1 =>
-                        {
-                            b1.Property<Guid>("CharacterStatusId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("CoreSkillpoints")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("FourthTierGeneralSkillpoints")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("FourthTierSkillpoints")
-                                .HasColumnType("int");
-
-                            b1.Property<int>("ThirdTierGeneralSkillpoints")
-                                .HasColumnType("int");
-
-                            b1.HasKey("CharacterStatusId");
-
-                            b1.ToTable("CharacterStatuses");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CharacterStatusId");
-
-                            b1.HasData(
-                                new
-                                {
-                                    CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
-                                    CoreSkillpoints = 10,
-                                    FourthTierGeneralSkillpoints = 1,
-                                    FourthTierSkillpoints = 1,
-                                    ThirdTierGeneralSkillpoints = 3
-                                });
-                        });
-
                     b.Navigation("BasicInformation");
-
-                    b.Navigation("UnspentSkillpoints");
                 });
 
             modelBuilder.Entity("Progress.Application.Persistence.Entities.Resource", b =>
@@ -361,18 +257,9 @@ namespace Progress.Application.Migrations
                         .HasForeignKey("CharacterStatusId");
                 });
 
-            modelBuilder.Entity("Progress.Application.Persistence.Entities.Stat", b =>
-                {
-                    b.HasOne("Progress.Application.Persistence.Entities.CharacterStatus", null)
-                        .WithMany("Stats")
-                        .HasForeignKey("CharacterStatusId");
-                });
-
             modelBuilder.Entity("Progress.Application.Persistence.Entities.CharacterStatus", b =>
                 {
                     b.Navigation("Resources");
-
-                    b.Navigation("Stats");
                 });
 #pragma warning restore 612, 618
         }

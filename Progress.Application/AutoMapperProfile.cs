@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Progress.Application.Persistence.Entities;
+using Progress.Application.Usecases.Categories;
+using Progress.Application.Usecases.Status;
 
 namespace Progress.Application
 {
@@ -6,6 +9,13 @@ namespace Progress.Application
     {
         public AutoMapperProfile()
         {
+            CreateMap<Category, CategoryDto>();
+            CreateMap<AddNewCategoryCommand, Category>()
+                .ForMember(c => c.Id, o => o.Ignore());
+            CreateMap<Resource, ResourceDto>();
+            CreateMap<BasicInformation, BasicInformationDto>();
+            CreateMap<Stat, StatDto>();
+            CreateMap<UnspentSkillpoints, UnspentSkillpointsDto>();
         }
     }
 }

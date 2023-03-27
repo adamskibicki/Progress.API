@@ -1,4 +1,8 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Progress.Application.Persistence;
 using Progress.Application.Usecases.Status;
 
 namespace Progress.Application.Usecases.Categories
@@ -9,9 +13,20 @@ namespace Progress.Application.Usecases.Categories
 
     public class GetUserCategoriesQueryHandler : IRequestHandler<GetUserCategoriesQuery, IEnumerable<CategoryDto>>
     {
-        public Task<IEnumerable<CategoryDto>> Handle(GetUserCategoriesQuery request, CancellationToken cancellationToken)
+        private readonly ApplicationDbContext dbContext;
+        private readonly IConfigurationProvider configurationProvider;
+
+        public GetUserCategoriesQueryHandler(ApplicationDbContext dbContext, IConfigurationProvider configurationProvider)
         {
-            return Task.FromResult(typeof(CategoriesCollection).GetProperties().Select(p => p.GetValue(null) as CategoryDto));
+            this.dbContext = dbContext;
+            this.configurationProvider = configurationProvider;
+        }
+
+        public async Task<IEnumerable<CategoryDto>> Handle(GetUserCategoriesQuery request, CancellationToken cancellationToken)
+        {
+            return await dbContext.Categories
+                .ProjectTo<CategoryDto>(configurationProvider)
+                .ToArrayAsync(cancellationToken: cancellationToken);
         }
     }
 }

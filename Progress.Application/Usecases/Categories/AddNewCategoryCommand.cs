@@ -2,6 +2,8 @@
 using FluentValidation;
 using MediatR;
 using Progress.Application.Common;
+using Progress.Application.Persistence;
+using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Status;
 
 namespace Progress.Application.Usecases.Categories
@@ -16,7 +18,7 @@ namespace Progress.Application.Usecases.Categories
     {
         public AddNewCategoryCommandValidator()
         {
-            RuleFor(x=> x.Name).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.DisplayColor).NotEmpty().IsColorString();
         }
     }
@@ -24,15 +26,23 @@ namespace Progress.Application.Usecases.Categories
     public class AddNewCategoryCommandHandler : IRequestHandler<AddNewCategoryCommand, CategoryDto>
     {
         private readonly IMapper mapper;
+        private readonly ApplicationDbContext dbContext;
 
-        public AddNewCategoryCommandHandler(IMapper mapper)
+        public AddNewCategoryCommandHandler(IMapper mapper, ApplicationDbContext dbContext)
         {
             this.mapper = mapper;
+            this.dbContext = dbContext;
         }
 
-        public Task<CategoryDto> Handle(AddNewCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<CategoryDto> Handle(AddNewCategoryCommand request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(mapper.Map<CategoryDto>(request));
+            var category = mapper.Map<Category> (request);
+
+            dbContext.Add(category);
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            return mapper.Map<CategoryDto>(category);
         }
     }
 }

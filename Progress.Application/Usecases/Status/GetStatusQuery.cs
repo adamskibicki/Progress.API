@@ -1,4 +1,7 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Progress.Application.Persistence;
 using Progress.Application.Usecases.Status;
 using System;
 using System.Collections.Generic;
@@ -15,91 +18,36 @@ namespace Progress.Application.Usecases.Status
 
     public class GetStatusQueryHandler : IRequestHandler<GetStatusQuery, StatusDto>
     {
+        private readonly CategoriesDataProvider CategoriesDataProvider;
+        private readonly ApplicationDbContext dbContext;
+        private readonly IMapper mapper;
+
+        public GetStatusQueryHandler(ApplicationDbContext dbContext, IMapper mapper)
+        {
+            CategoriesDataProvider = new CategoriesDataProvider(dbContext, mapper);
+            this.dbContext = dbContext;
+            this.mapper = mapper;
+        }
+
         public Task<StatusDto> Handle(GetStatusQuery request, CancellationToken cancellationToken)
         {
+            var dbStatus = dbContext.CharacterStatuses
+                .Include(cs => cs.Resources)
+                .Include(cs => cs.Stats)
+                .Single(cs => cs.Id == request.StatusId);
+
             var result = new StatusDto()
             {
+                Id = request.StatusId,
                 GeneralInformation = new GeneralInformationDto()
                 {
-                    BasicInfo = new BasicInformationDto()
-                    {
-                        Name = "Ilea Spears",
-                        Title = "Dragonslayer"
-                    },
-                    Resources = new ResourceDto[]
-                    {
-                        new ResourceDto()
-                        {
-                            DisplayName = "Health",
-                            CalculationName = "Health",
-                            BaseStatName = "Vitality",
-                            ResourcePointsPerBaseStatPoint = 10
-                        },
-                        new ResourceDto()
-                        {
-                            DisplayName = "Stamina",
-                            CalculationName = "Stamina",
-                            BaseStatName = "Endurance",
-                            ResourcePointsPerBaseStatPoint = 10
-                        },
-                        new ResourceDto()
-                        {
-                            DisplayName = "Mana",
-                            CalculationName = "Mana",
-                            BaseStatName = "Wisdom",
-                            ResourcePointsPerBaseStatPoint = 10
-                        },
-                        new ResourceDto()
-                        {
-                            DisplayName = "Mana (Essence)",
-                            CalculationName = "Health",
-                            BaseStatName = "Vitality",
-                            ResourcePointsPerBaseStatPoint = 10
-                        },
-                    },
-                    Skillpoints = new UnspentSkillpointsDto()
-                    {
-                        CoreSkillpoints = 10,
-                        FourthTierGeneralSkillpoints = 1,
-                        FourthTierSkillpoints = 1,
-                        ThirdTierGeneralSkillpoints = 3
-                    },
+                    BasicInfo = mapper.Map<BasicInformationDto>(dbStatus.BasicInformation),
+                    Resources = mapper.ProjectTo<ResourceDto>(dbStatus.Resources.AsQueryable()).ToArray(),
+                    Skillpoints = mapper.Map<UnspentSkillpointsDto>(dbStatus.UnspentSkillpoints),
                     Stats = new StatsDto()
                     {
-                        UnspentStatpoints = 25,
-                        Stats = new StatDto[]
-                        {
-                            new StatDto()
-                            {
-                                Name = "Vitality",
-                                Value = 3800
-                            },
-                            new StatDto()
-                            {
-                                Name = "Endurance",
-                                Value = 600
-                            },
-                            new StatDto()
-                            {
-                                Name = "Strength",
-                                Value = 860
-                            },
-                            new StatDto()
-                            {
-                                Name = "Dexterity",
-                                Value = 610
-                            },
-                            new StatDto()
-                            {
-                                Name = "Intelligence",
-                                Value = 3770
-                            },
-                            new StatDto()
-                            {
-                                Name = "Wisdom",
-                                Value = 4000
-                            }
-                        }
+                        UnspentStatpoints = dbStatus.UnspentStatpoints,
+                        Stats = mapper.ProjectTo<StatDto>(dbStatus.Stats.AsQueryable()).ToArray()
                     }
                 },
                 Classes = new ClassDto[]
@@ -113,19 +61,19 @@ namespace Progress.Application.Usecases.Status
                             new ClassModifierDto()
                             {
                                 Description = "Body enhancement magic is improved by 500%",
-                                Category = CategoriesCollection.BodyEnhancement,
+                                Category = CategoriesDataProvider.BodyEnhancement,
                                 PercentagePointsOfCategoryIncrease = 500
                             },
                             new ClassModifierDto()
                             {
                                 Description = "All healing magic skills are improved by 500%",
-                                Category = CategoriesCollection.HealingMagic,
+                                Category = CategoriesDataProvider.HealingMagic,
                                 PercentagePointsOfCategoryIncrease = 500
                             },
                             new ClassModifierDto()
                             {
                                 Description = "All cosmic magic skills are improved by 250%",
-                                Category = CategoriesCollection.CosmicMagic,
+                                Category = CategoriesDataProvider.CosmicMagic,
                                 PercentagePointsOfCategoryIncrease = 250
                             },
                             new ClassModifierDto()
@@ -186,8 +134,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.HealingMagic,
-                                    CategoriesCollection.CosmicMagic
+                                    CategoriesDataProvider.HealingMagic,
+                                    CategoriesDataProvider.CosmicMagic
                                 }
                             },
                             new SkillDto()
@@ -206,8 +154,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.HealingMagic,
-                                    CategoriesCollection.CosmicMagic
+                                    CategoriesDataProvider.HealingMagic,
+                                    CategoriesDataProvider.CosmicMagic
                                 }
                             },
                             new SkillDto()
@@ -225,9 +173,9 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.Aura,
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.CosmicMagic
+                                    CategoriesDataProvider.Aura,
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.CosmicMagic
                                 },
                                 Variables = new SkillVariableDto[]
                                 {
@@ -267,7 +215,7 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.TeleportationMagic
+                                    CategoriesDataProvider.TeleportationMagic
                                 }
                             },
                             new SkillDto()
@@ -285,9 +233,9 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.Aura,
-                                    CategoriesCollection.PerceptionAura,
-                                    CategoriesCollection.CosmicMagic
+                                    CategoriesDataProvider.Aura,
+                                    CategoriesDataProvider.PerceptionAura,
+                                    CategoriesDataProvider.CosmicMagic
                                 }
                             },
                             new SkillDto()
@@ -305,9 +253,9 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.HealingMagic,
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.CosmicMagic
+                                    CategoriesDataProvider.HealingMagic,
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.CosmicMagic
                                 }
                             },
                             new SkillDto()
@@ -325,8 +273,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.CosmicMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.CosmicMagic
                                 }
                             },
                             new SkillDto()
@@ -344,7 +292,7 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
+                                    CategoriesDataProvider.BodyEnhancement,
                                 }
                             },
                             new SkillDto()
@@ -362,7 +310,7 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement
+                                    CategoriesDataProvider.BodyEnhancement
                                 }
                             },
                             new SkillDto()
@@ -380,8 +328,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.ArcaneMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.ArcaneMagic
                                 }
                             },
                         }
@@ -395,19 +343,19 @@ namespace Progress.Application.Usecases.Status
                             new ClassModifierDto()
                             {
                                 Description = "Body enhancement magic is improved by 500%",
-                                Category = CategoriesCollection.BodyEnhancement,
+                                Category = CategoriesDataProvider.BodyEnhancement,
                                 PercentagePointsOfCategoryIncrease = 500
                             },
                             new ClassModifierDto()
                             {
                                 Description = "All Ashen magic skills are improved by 500%",
-                                Category = CategoriesCollection.AshenMagic,
+                                Category = CategoriesDataProvider.AshenMagic,
                                 PercentagePointsOfCategoryIncrease = 500
                             },
                             new ClassModifierDto()
                             {
                                 Description = "All Fire magic skills are improved by 250%",
-                                Category = CategoriesCollection.FireMagic,
+                                Category = CategoriesDataProvider.FireMagic,
                                 PercentagePointsOfCategoryIncrease = 250
                             },
                             new ClassModifierDto()
@@ -449,8 +397,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.AshenMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.AshenMagic
                                 }
                             },
                             new SkillDto()
@@ -468,10 +416,10 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.Aura,
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.AshenMagic,
-                                    CategoriesCollection.FireMagic
+                                    CategoriesDataProvider.Aura,
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.AshenMagic,
+                                    CategoriesDataProvider.FireMagic
                                 },
                                 Variables = new SkillVariableDto[]
                                 {
@@ -481,7 +429,7 @@ namespace Progress.Application.Usecases.Status
                                         BaseValue = 100,
                                         Unit = "%",
                                         CategoryCalculationType = CategoryCalculationType.Additive,
-                                        VariableCalculationType = VariableCalculationType.Additive, 
+                                        VariableCalculationType = VariableCalculationType.Additive,
                                         AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength", "Dexterity" }
                                     }
                                 }
@@ -502,8 +450,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.AshenMagic,
-                                    CategoriesCollection.FireMagic
+                                    CategoriesDataProvider.AshenMagic,
+                                    CategoriesDataProvider.FireMagic
                                 }
                             },
                             new SkillDto()
@@ -521,9 +469,9 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.AshenMagic,
-                                    CategoriesCollection.FireMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.AshenMagic,
+                                    CategoriesDataProvider.FireMagic
                                 }
                             },
                             new SkillDto()
@@ -541,8 +489,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.AshenMagic,
-                                    CategoriesCollection.FireMagic
+                                    CategoriesDataProvider.AshenMagic,
+                                    CategoriesDataProvider.FireMagic
                                 }
                             },
                             new SkillDto()
@@ -560,7 +508,7 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.AshenMagic
+                                    CategoriesDataProvider.AshenMagic
                                 }
                             },
                             new SkillDto()
@@ -578,8 +526,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.AshenMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.AshenMagic
                                 }
                             },
                             new SkillDto()
@@ -597,9 +545,9 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.AshenMagic,
-                                    CategoriesCollection.FireMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.AshenMagic,
+                                    CategoriesDataProvider.FireMagic
                                 },
                                 Variables = new SkillVariableDto[]
                                 {
@@ -609,7 +557,7 @@ namespace Progress.Application.Usecases.Status
                                         BaseValue = 75,
                                         Unit = "%",
                                         CategoryCalculationType = CategoryCalculationType.Additive,
-                                        VariableCalculationType = VariableCalculationType.Additive, 
+                                        VariableCalculationType = VariableCalculationType.Additive,
                                         AffectedStatNames = new string[] { "Reflexes", "Speed" }
                                     },
                                     new SkillVariableDto()
@@ -648,8 +596,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.AshenMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.AshenMagic
                                 }
                             },
                             new SkillDto()
@@ -667,7 +615,7 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement
+                                    CategoriesDataProvider.BodyEnhancement
                                 }
                             },
 
@@ -682,7 +630,7 @@ namespace Progress.Application.Usecases.Status
                             new ClassModifierDto()
                             {
                                 Description = "Space Magic is improved by 500%",
-                                Category = CategoriesCollection.SpaceMagic,
+                                Category = CategoriesDataProvider.SpaceMagic,
                                 PercentagePointsOfCategoryIncrease = 500
                             },
                             new ClassModifierDto()
@@ -692,49 +640,49 @@ namespace Progress.Application.Usecases.Status
                             new ClassModifierDto()
                             {
                                 Description = "Body Enhancement Magic is improved by 300%",
-                                Category = CategoriesCollection.BodyEnhancement,
+                                Category = CategoriesDataProvider.BodyEnhancement,
                                 PercentagePointsOfCategoryIncrease = 300
                             },
                             new ClassModifierDto()
                             {
                                 Description = "Fire Magic is improved by 200%",
-                                Category = CategoriesCollection.FireMagic,
+                                Category = CategoriesDataProvider.FireMagic,
                                 PercentagePointsOfCategoryIncrease = 200
                             },
                             new ClassModifierDto()
                             {
                                 Description = "Flesh Magic is improved by 100%",
-                                Category = CategoriesCollection.FleshMagic,
+                                Category = CategoriesDataProvider.FleshMagic,
                                 PercentagePointsOfCategoryIncrease = 100
                             },
                             new ClassModifierDto()
                             {
                                 Description = "Healing Magic is improved by 100%",
-                                Category = CategoriesCollection.HealingMagic,
+                                Category = CategoriesDataProvider.HealingMagic,
                                 PercentagePointsOfCategoryIncrease = 100
                             },
                             new ClassModifierDto()
                             {
                                 Description = "Mind Magic is improved by 100%",
-                                Category = CategoriesCollection.MindMagic,
+                                Category = CategoriesDataProvider.MindMagic,
                                 PercentagePointsOfCategoryIncrease = 100
                             },
                             new ClassModifierDto()
                             {
                                 Description = "Ice Magic is improved by 100%",
-                                Category = CategoriesCollection.IceMagic,
+                                Category = CategoriesDataProvider.IceMagic,
                                 PercentagePointsOfCategoryIncrease = 100
                             },
                             new ClassModifierDto()
                             {
                                 Description = "Lava Magic is improved by 100%",
-                                Category = CategoriesCollection.LavaMagic,
+                                Category = CategoriesDataProvider.LavaMagic,
                                 PercentagePointsOfCategoryIncrease = 100
                             },
                             new ClassModifierDto()
                             {
                                 Description = "Earth Magic is improved by 100%",
-                                Category = CategoriesCollection.EarthMagic,
+                                Category = CategoriesDataProvider.EarthMagic,
                                 PercentagePointsOfCategoryIncrease = 100
                             },
                             new ClassModifierDto()
@@ -767,10 +715,10 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.Aura,
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.SpaceMagic,
-                                    CategoriesCollection.FireMagic
+                                    CategoriesDataProvider.Aura,
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.SpaceMagic,
+                                    CategoriesDataProvider.FireMagic
                                 }
                             },
                             new SkillDto()
@@ -788,7 +736,7 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.SpaceMagic,
+                                    CategoriesDataProvider.SpaceMagic,
                                 }
                             },
                             new SkillDto()
@@ -807,9 +755,9 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.SpaceMagic,
-                                    CategoriesCollection.FireMagic,
-                                    CategoriesCollection.HealingMagic
+                                    CategoriesDataProvider.SpaceMagic,
+                                    CategoriesDataProvider.FireMagic,
+                                    CategoriesDataProvider.HealingMagic
                                 }
                             },
                             new SkillDto()
@@ -827,9 +775,9 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.SpaceMagic,
-                                    CategoriesCollection.FireMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.SpaceMagic,
+                                    CategoriesDataProvider.FireMagic
                                 },
                                 Variables = new SkillVariableDto[]
                                 {
@@ -849,7 +797,7 @@ namespace Progress.Application.Usecases.Status
                                         CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
                                         VariableCalculationType = VariableCalculationType.Additive,
                                         Name = "vitality_increase",
-                                        Unit = "%", 
+                                        Unit = "%",
                                     }
                                 }
                             },
@@ -868,8 +816,8 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.BodyEnhancement,
-                                    CategoriesCollection.SpaceMagic
+                                    CategoriesDataProvider.BodyEnhancement,
+                                    CategoriesDataProvider.SpaceMagic
                                 }
                             },
                             new SkillDto()
@@ -887,7 +835,7 @@ namespace Progress.Application.Usecases.Status
                                 },
                                 Categories = new CategoryDto[]
                                 {
-                                    CategoriesCollection.SpaceMagic
+                                    CategoriesDataProvider.SpaceMagic
                                 }
                             },
                         }
@@ -899,82 +847,38 @@ namespace Progress.Application.Usecases.Status
         }
     }
 
-    public static class CategoriesCollection
+    public class CategoriesDataProvider
     {
-        public static CategoryDto ArcaneMagic { get; set; } = new CategoryDto()
+        private readonly ApplicationDbContext dbContext;
+        private readonly IMapper mapper;
+
+        public CategoriesDataProvider(ApplicationDbContext dbContext, IMapper mapper)
         {
-            Name = "Arcane Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto BodyEnhancement { get; set; } = new CategoryDto()
+            this.dbContext = dbContext;
+            this.mapper = mapper;
+        }
+
+        private CategoryDto GetCategoryDtoFromDbByName(string name)
         {
-            Name = "Body Enhancement",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto HealingMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Healing Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto CosmicMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Cosmic Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto Aura { get; set; } = new CategoryDto()
-        {
-            Name = "Aura",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto TeleportationMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Teleportation Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto PerceptionAura { get; set; } = new CategoryDto()
-        {
-            Name = "Perception Aura",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto AshenMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Ashen Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto FireMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Fire Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto SpaceMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Space Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto FleshMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Flesh Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto MindMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Mind Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto IceMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Ice Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto LavaMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Lava Magic",
-            Id = Guid.NewGuid()
-        };
-        public static CategoryDto EarthMagic { get; set; } = new CategoryDto()
-        {
-            Name = "Earth Magic",
-            Id = Guid.NewGuid()
-        };
+            var category = dbContext.Categories.Single(c => c.Name == name);
+
+            return mapper.Map<CategoryDto>(category);
+        }
+
+        public CategoryDto ArcaneMagic => GetCategoryDtoFromDbByName("Arcane Magic");
+        public CategoryDto BodyEnhancement => GetCategoryDtoFromDbByName("Body Enhancement");
+        public CategoryDto HealingMagic => GetCategoryDtoFromDbByName("Healing Magic");
+        public CategoryDto CosmicMagic => GetCategoryDtoFromDbByName("Cosmic Magic");
+        public CategoryDto Aura => GetCategoryDtoFromDbByName("Aura");
+        public CategoryDto TeleportationMagic => GetCategoryDtoFromDbByName("Teleportation Magic");
+        public CategoryDto PerceptionAura => GetCategoryDtoFromDbByName("Perception Aura");
+        public CategoryDto AshenMagic => GetCategoryDtoFromDbByName("Ashen Magic");
+        public CategoryDto FireMagic => GetCategoryDtoFromDbByName("Fire Magic");
+        public CategoryDto SpaceMagic => GetCategoryDtoFromDbByName("Space Magic");
+        public CategoryDto FleshMagic => GetCategoryDtoFromDbByName("Flesh Magic");
+        public CategoryDto MindMagic => GetCategoryDtoFromDbByName("Mind Magic");
+        public CategoryDto IceMagic => GetCategoryDtoFromDbByName("Ice Magic");
+        public CategoryDto LavaMagic => GetCategoryDtoFromDbByName("Lava Magic");
+        public CategoryDto EarthMagic => GetCategoryDtoFromDbByName("Earth Magic");
     }
 }

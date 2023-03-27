@@ -5,6 +5,7 @@ namespace Progress.Application.Usecases.Status
 {
     public class StatusDto
     {
+        public Guid Id { get; set; }
         public GeneralInformationDto GeneralInformation { get; set; }
         public ClassDto[] Classes { get; set; }
         public SkillDto[] GeneralSkills { get; set; }
@@ -101,6 +102,7 @@ namespace Progress.Application.Usecases.Status
 
     public class ResourceDto
     {
+        public Guid Id { get; set; }
         public string DisplayName { get; set; }
         public string CalculationName { get; set; }
         public string BaseStatName { get; set; }
@@ -123,6 +125,7 @@ namespace Progress.Application.Usecases.Status
 
     public class StatDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int Value { get; set; }
     }
