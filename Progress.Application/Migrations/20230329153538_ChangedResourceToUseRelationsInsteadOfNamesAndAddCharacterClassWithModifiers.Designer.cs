@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Progress.Application.Persistence;
 
@@ -11,9 +12,11 @@ using Progress.Application.Persistence;
 namespace Progress.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230329153538_ChangedResourceToUseRelationsInsteadOfNamesAndAddCharacterClassWithModifiers")]
+    partial class ChangedResourceToUseRelationsInsteadOfNamesAndAddCharacterClassWithModifiers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,9 +140,6 @@ namespace Progress.Application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CharacterStatusId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
@@ -148,29 +148,24 @@ namespace Progress.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CharacterStatusId");
-
                     b.ToTable("CharacterClasses");
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("c2782453-16ab-4d52-923d-97c6a2b40029"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
                             Level = 1004,
                             Name = "The Cosmic Immortal"
                         },
                         new
                         {
                             Id = new Guid("453c74bc-e480-44c2-82ea-13e3e49f821b"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
                             Level = 1001,
                             Name = "The Pyroclastic Storm"
                         },
                         new
                         {
                             Id = new Guid("6689fb11-732c-4fda-af01-abde9895dc16"),
-                            CharacterStatusId = new Guid("afa42078-a071-4bea-978e-f439c713848c"),
                             Level = 1002,
                             Name = "The Sunforged Realmwalker"
                         });
@@ -520,7 +515,7 @@ namespace Progress.Application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BaseStatId")
+                    b.Property<Guid?>("BaseStatId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CharacterStatusId")
@@ -641,17 +636,6 @@ namespace Progress.Application.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Progress.Application.Persistence.Entities.CharacterClass", b =>
-                {
-                    b.HasOne("Progress.Application.Persistence.Entities.CharacterStatus", "CharacterStatus")
-                        .WithMany("CharacterClasses")
-                        .HasForeignKey("CharacterStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CharacterStatus");
-                });
-
             modelBuilder.Entity("Progress.Application.Persistence.Entities.CharacterStatus", b =>
                 {
                     b.OwnsOne("Progress.Application.Persistence.Entities.BasicInformation", "BasicInformation", b1 =>
@@ -749,9 +733,7 @@ namespace Progress.Application.Migrations
                 {
                     b.HasOne("Progress.Application.Persistence.Entities.Stat", "BaseStat")
                         .WithMany()
-                        .HasForeignKey("BaseStatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BaseStatId");
 
                     b.HasOne("Progress.Application.Persistence.Entities.CharacterStatus", null)
                         .WithMany("Resources")
@@ -774,8 +756,6 @@ namespace Progress.Application.Migrations
 
             modelBuilder.Entity("Progress.Application.Persistence.Entities.CharacterStatus", b =>
                 {
-                    b.Navigation("CharacterClasses");
-
                     b.Navigation("Resources");
 
                     b.Navigation("Stats");

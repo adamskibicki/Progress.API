@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Progress.Application.Persistence;
 
@@ -11,9 +12,11 @@ using Progress.Application.Persistence;
 namespace Progress.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230329155131_AddClassesToStatus")]
+    partial class AddClassesToStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -520,7 +523,7 @@ namespace Progress.Application.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BaseStatId")
+                    b.Property<Guid?>("BaseStatId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CharacterStatusId")
@@ -749,9 +752,7 @@ namespace Progress.Application.Migrations
                 {
                     b.HasOne("Progress.Application.Persistence.Entities.Stat", "BaseStat")
                         .WithMany()
-                        .HasForeignKey("BaseStatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BaseStatId");
 
                     b.HasOne("Progress.Application.Persistence.Entities.CharacterStatus", null)
                         .WithMany("Resources")

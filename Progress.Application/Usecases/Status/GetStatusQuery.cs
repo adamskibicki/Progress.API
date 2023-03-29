@@ -34,90 +34,11 @@ namespace Progress.Application.Usecases.Status
             var dbStatus = dbContext.CharacterStatuses
                 .Include(cs => cs.Resources)
                 .Include(cs => cs.Stats)
+                .Include(cs => cs.CharacterClasses)
+                .ThenInclude(cc => cc.ClassModifiers)
                 .Single(cs => cs.Id == request.StatusId);
 
-            var result = new StatusDto()
-            {
-                Id = request.StatusId,
-                GeneralInformation = new GeneralInformationDto()
-                {
-                    BasicInfo = mapper.Map<BasicInformationDto>(dbStatus.BasicInformation),
-                    Resources = mapper.ProjectTo<ResourceDto>(dbStatus.Resources.AsQueryable()).ToArray(),
-                    Skillpoints = mapper.Map<UnspentSkillpointsDto>(dbStatus.UnspentSkillpoints),
-                    Stats = new StatsDto()
-                    {
-                        UnspentStatpoints = dbStatus.UnspentStatpoints,
-                        Stats = mapper.ProjectTo<StatDto>(dbStatus.Stats.AsQueryable()).ToArray()
-                    }
-                },
-                Classes = new ClassDto[]
-                {
-                    new ClassDto()
-                    {
-                        Name = "The Cosmic Immortal",
-                        Level = 1004,
-                        Modifiers = new ClassModifierDto[]
-                        {
-                            new ClassModifierDto()
-                            {
-                                Description = "Body enhancement magic is improved by 500%",
-                                Category = CategoriesDataProvider.BodyEnhancement,
-                                PercentagePointsOfCategoryIncrease = 500
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "All healing magic skills are improved by 500%",
-                                Category = CategoriesDataProvider.HealingMagic,
-                                PercentagePointsOfCategoryIncrease = 500
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "All cosmic magic skills are improved by 250%",
-                                Category = CategoriesDataProvider.CosmicMagic,
-                                PercentagePointsOfCategoryIncrease = 250
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Natural health regeneration is increased by 1% per minute",
-                                PercentagePointsOfCategoryIncrease = 0
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Natural mana regeneration is increased by 1% per minute",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Food, water and sleep needed to sustain yourself are no longer required",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "You do not age",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Your mana capacity is multiplied by five",
-                                PercentagePointsOfCategoryIncrease = 500,
-                                CategoryCalculationType = CategoryCalculationType.Multiplicative,
-                                AffectedResourceName = "Mana"
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "You can absorb and use 25% of the ambient mana around you",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "All mana regeneration increases by 1% to a maximum of 100% for every second you are not hit by an enemy attack",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Excess generated mana instead charges a second mana pool equaling your total health [0/125400]. Mana from this pool can be transferred into your main mana pool at will",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "You may infuse any barrier, wall, or magical armor with cosmic energy",
-                            }
-                        },
-                        Skills = new SkillDto[]
+            var cosmicImmortalSkills = new SkillDto[]
                         {
                             new SkillDto()
                             {
@@ -332,55 +253,8 @@ namespace Progress.Application.Usecases.Status
                                     CategoriesDataProvider.ArcaneMagic
                                 }
                             },
-                        }
-                    },
-                    new ClassDto()
-                    {
-                        Name = "The Pyroclastic Storm",
-                        Level = 1001,
-                        Modifiers = new ClassModifierDto[]
-                        {
-                            new ClassModifierDto()
-                            {
-                                Description = "Body enhancement magic is improved by 500%",
-                                Category = CategoriesDataProvider.BodyEnhancement,
-                                PercentagePointsOfCategoryIncrease = 500
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "All Ashen magic skills are improved by 500%",
-                                Category = CategoriesDataProvider.AshenMagic,
-                                PercentagePointsOfCategoryIncrease = 500
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "All Fire magic skills are improved by 250%",
-                                Category = CategoriesDataProvider.FireMagic,
-                                PercentagePointsOfCategoryIncrease = 250
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "All fighting styles using hand to hand combat are more refined",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Your will is ash and heat",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "You cannot be stunned by enemy attacks",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Your bones and muscles have vastly increased density",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Your heat generation is increased by 1000%",
-                            },
-
-                        },
-                        Skills = new SkillDto[]
+                        };
+            var pyroclasticStormSkills = new SkillDto[]
                         {
                             new SkillDto()
                             {
@@ -619,86 +493,8 @@ namespace Progress.Application.Usecases.Status
                                 }
                             },
 
-                        }
-                    },
-                    new ClassDto()
-                    {
-                        Name = "The Sunforged Realmwalker",
-                        Level = 1002,
-                        Modifiers = new ClassModifierDto[]
-                        {
-                            new ClassModifierDto()
-                            {
-                                Description = "Space Magic is improved by 500%",
-                                Category = CategoriesDataProvider.SpaceMagic,
-                                PercentagePointsOfCategoryIncrease = 500
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Resilience is increased by 500%",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Body Enhancement Magic is improved by 300%",
-                                Category = CategoriesDataProvider.BodyEnhancement,
-                                PercentagePointsOfCategoryIncrease = 300
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Fire Magic is improved by 200%",
-                                Category = CategoriesDataProvider.FireMagic,
-                                PercentagePointsOfCategoryIncrease = 200
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Flesh Magic is improved by 100%",
-                                Category = CategoriesDataProvider.FleshMagic,
-                                PercentagePointsOfCategoryIncrease = 100
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Healing Magic is improved by 100%",
-                                Category = CategoriesDataProvider.HealingMagic,
-                                PercentagePointsOfCategoryIncrease = 100
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Mind Magic is improved by 100%",
-                                Category = CategoriesDataProvider.MindMagic,
-                                PercentagePointsOfCategoryIncrease = 100
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Ice Magic is improved by 100%",
-                                Category = CategoriesDataProvider.IceMagic,
-                                PercentagePointsOfCategoryIncrease = 100
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Lava Magic is improved by 100%",
-                                Category = CategoriesDataProvider.LavaMagic,
-                                PercentagePointsOfCategoryIncrease = 100
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Earth Magic is improved by 100%",
-                                Category = CategoriesDataProvider.EarthMagic,
-                                PercentagePointsOfCategoryIncrease = 100
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Your Soul has been strengthened by the Primordial Flame",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Your skin grows more resilient",
-                            },
-                            new ClassModifierDto()
-                            {
-                                Description = "Greatly increases the heat you can store within your body and soul",
-                            },
-                        },
-                        Skills = new SkillDto[]
+                        };
+            var sunforgedRealmwalkerSkills = new SkillDto[]
                         {
                             new SkillDto()
                             {
@@ -838,9 +634,41 @@ namespace Progress.Application.Usecases.Status
                                     CategoriesDataProvider.SpaceMagic
                                 }
                             },
-                        }
-                    }
+                        };
+
+            var classes = mapper.ProjectTo<ClassDto>(dbStatus.CharacterClasses.AsQueryable()).ToArray();
+
+            foreach( var c in classes)
+            {
+                switch (c.Name)
+                {
+                    case "The Cosmic Immortal":
+                        c.Skills = cosmicImmortalSkills;
+                        break;
+                    case "The Pyroclastic Storm":
+                        c.Skills = pyroclasticStormSkills;
+                        break;
+                    case "The Sunforged Realmwalker":
+                        c.Skills = sunforgedRealmwalkerSkills;
+                        break;
                 }
+            }
+
+            var result = new StatusDto()
+            {
+                Id = request.StatusId,
+                GeneralInformation = new GeneralInformationDto()
+                {
+                    BasicInfo = mapper.Map<BasicInformationDto>(dbStatus.BasicInformation),
+                    Resources = mapper.ProjectTo<ResourceDto>(dbStatus.Resources.AsQueryable()).ToArray(),
+                    Skillpoints = mapper.Map<UnspentSkillpointsDto>(dbStatus.UnspentSkillpoints),
+                    Stats = new StatsDto()
+                    {
+                        UnspentStatpoints = dbStatus.UnspentStatpoints,
+                        Stats = mapper.ProjectTo<StatDto>(dbStatus.Stats.AsQueryable()).ToArray()
+                    }
+                },
+                Classes = classes
             };
 
             return Task.FromResult(result);

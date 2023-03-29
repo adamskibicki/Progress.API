@@ -13,5 +13,7 @@ namespace Progress.Application.Persistence.Entities
         public UnspentSkillpoints UnspentSkillpoints { get; set; }
 
         public List<Stat> Stats { get; set; }
+
+        public List<CharacterClass> CharacterClasses { get; set; }
     }
 }

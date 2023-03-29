@@ -16,6 +16,9 @@ namespace Progress.Application
             CreateMap<BasicInformation, BasicInformationDto>();
             CreateMap<Stat, StatDto>();
             CreateMap<UnspentSkillpoints, UnspentSkillpointsDto>();
+            CreateMap<CharacterClass, ClassDto>()
+                .ForMember(c => c.Modifiers, o => o.MapFrom(c => c.ClassModifiers));
+            CreateMap<ClassModifier, ClassModifierDto>();
         }
     }
 }

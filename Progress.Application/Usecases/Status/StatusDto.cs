@@ -26,7 +26,7 @@ namespace Progress.Application.Usecases.Status
         public int PercentagePointsOfCategoryIncrease { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public CategoryCalculationType CategoryCalculationType { get; set; }
-        public string AffectedResourceName { get; set; }
+        public Guid? AffectedResourceId { get; set; }
     }
 
     public class CategoryDto
@@ -104,8 +104,7 @@ namespace Progress.Application.Usecases.Status
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
-        public string CalculationName { get; set; }
-        public string BaseStatName { get; set; }
+        public Guid BaseStatId { get; set; }
         public int ResourcePointsPerBaseStatPoint { get; set; }
     }
 
