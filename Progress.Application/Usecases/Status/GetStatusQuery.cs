@@ -36,6 +36,7 @@ namespace Progress.Application.Usecases.Status
                 .Include(cs => cs.Stats)
                 .Include(cs => cs.CharacterClasses)
                 .ThenInclude(cc => cc.ClassModifiers)
+                .ThenInclude(cm => cm.Category)
                 .Single(cs => cs.Id == request.StatusId);
 
             var cosmicImmortalSkills = new SkillDto[]
