@@ -15,5 +15,10 @@ namespace Progress.Application.Persistence.Entities
         public List<Stat> Stats { get; set; }
 
         public List<CharacterClass> CharacterClasses { get; set; }
+
+        public DateTimeOffset CreatedAt { get; set; }
+
+        public Guid UserCharacterId { get; set; }
+        public UserCharacter UserCharacter { get; set; }
     }
 }

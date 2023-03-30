@@ -18,12 +18,16 @@ namespace Progress.Application.Persistence
 
         public DbSet<CharacterClass> CharacterClasses { get; set; }
 
+        public DbSet<UserCharacter> UserCharacters { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            string userCharacterId = "0da44e54-90ea-4ad0-a409-ea0cb1d38c4a";
+
             string characterStatusId = "afa42078-a071-4bea-978e-f439c713848c";
 
             string vitalityStatId = "1bf1d8dd-7cc3-486d-bb26-0bde4ee439df";
@@ -58,6 +62,11 @@ namespace Progress.Application.Persistence
                 Level = 1002,
             });
 
+            modelBuilder.Entity<UserCharacter>().HasData(new UserCharacter()
+            {
+                Id = new Guid(userCharacterId)
+            });
+
             modelBuilder.Entity<CharacterStatus>().OwnsOne(cs => cs.BasicInformation)
                 .HasData(new
                 {
@@ -73,7 +82,7 @@ namespace Progress.Application.Persistence
                     CoreSkillpoints = 10,
                     FourthTierGeneralSkillpoints = 1,
                     FourthTierSkillpoints = 1,
-                    ThirdTierGeneralSkillpoints = 3
+                    ThirdTierGeneralSkillpoints = 3,
                 });
 
             #region categories
@@ -477,7 +486,9 @@ namespace Progress.Application.Persistence
                 new CharacterStatus()
                 {
                     Id = new Guid(characterStatusId),
-                    UnspentStatpoints = 25
+                    UnspentStatpoints = 25,
+                    UserCharacterId = new Guid(userCharacterId),
+                    CreatedAt = DateTimeOffset.UtcNow,
                 });
 
             modelBuilder.Entity<Resource>().HasData(resources);

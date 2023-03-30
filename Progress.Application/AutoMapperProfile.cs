@@ -2,6 +2,7 @@
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Categories;
 using Progress.Application.Usecases.Status;
+using Progress.Application.Usecases.UserCharacters;
 
 namespace Progress.Application
 {
@@ -19,6 +20,10 @@ namespace Progress.Application
             CreateMap<CharacterClass, ClassDto>()
                 .ForMember(c => c.Modifiers, o => o.MapFrom(c => c.ClassModifiers));
             CreateMap<ClassModifier, ClassModifierDto>();
+            CreateMap<CharacterStatus, UserCharacterDto>()
+                .ForMember(ucd => ucd.LastEdited, o => o.MapFrom(cs => cs.CreatedAt))
+                .ForMember(ucd => ucd.Name, o => o.MapFrom(cs => cs.BasicInformation.Name))
+                .ForMember(ucd => ucd.Title, o => o.MapFrom(cs => cs.BasicInformation.Title));
         }
     }
 }
