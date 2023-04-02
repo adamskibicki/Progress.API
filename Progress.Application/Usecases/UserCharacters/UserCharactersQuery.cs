@@ -35,7 +35,8 @@ namespace Progress.Application.Usecases.UserCharacters
                     cs.BasicInformation.Name,
                     cs.BasicInformation.Title,
                     cs.CreatedAt,
-                    cs.UserCharacterId
+                    cs.UserCharacterId,
+                    cs.Id
                 })
                 .ToArrayAsync(cancellationToken);
 
@@ -46,6 +47,7 @@ namespace Progress.Application.Usecases.UserCharacters
                     LastEdited = x.CreatedAt,
                     Name = x.Name,
                     Title = x.Title,
+                    StatusId = x.Id
                 });
         }
     }

@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Progress.Application.Usecases.UserCharacters;
+using Progress.Application.Usecases.UserCharacters.Add;
 
 namespace Progress.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]/[action]")]
+    [Route("api/[controller]")]
     public class UserCharactersController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -15,7 +16,10 @@ namespace Progress.API.Controllers
             this.mediator = mediator;
         }
 
-        [HttpGet(Name = "GetUserCharacters")]
-        public async Task<ActionResult<IEnumerable<UserCharacterDto>>> GetUserCharactersAsync([FromQuery] UserCharactersQuery query) => Ok(await mediator.Send(query));
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserCharacterDto>>> GetAsync([FromQuery] UserCharactersQuery query) => Ok(await mediator.Send(query));
+
+        [HttpPost]
+        public async Task<ActionResult<UserCharacterDto>> PostAsync([FromBody] AddUserCharacterCommand query) => Ok(await mediator.Send(query));
     }
 }
