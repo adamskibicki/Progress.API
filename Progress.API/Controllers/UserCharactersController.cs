@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Progress.Application.Usecases.UserCharacters;
 using Progress.Application.Usecases.UserCharacters.Add;
+using Progress.Application.Usecases.UserCharacters.Delete;
 
 namespace Progress.API.Controllers
 {
@@ -21,5 +22,8 @@ namespace Progress.API.Controllers
 
         [HttpPost]
         public async Task<ActionResult<UserCharacterDto>> PostAsync([FromBody] AddUserCharacterCommand query) => Ok(await mediator.Send(query));
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteAsync([FromQuery] DeleteUserCharacterCommand query) => Ok(await mediator.Send(query));
     }
 }

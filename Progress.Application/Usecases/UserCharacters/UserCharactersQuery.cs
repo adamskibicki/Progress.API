@@ -47,7 +47,8 @@ namespace Progress.Application.Usecases.UserCharacters
                     LastEdited = x.CreatedAt,
                     Name = x.Name,
                     Title = x.Title,
-                    StatusId = x.Id
+                    StatusId = x.Id,
+                    Id = x.UserCharacterId
                 });
         }
     }

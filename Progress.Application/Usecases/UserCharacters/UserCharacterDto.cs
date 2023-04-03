@@ -6,5 +6,6 @@
         public string Title { get; set; }
         public DateTimeOffset LastEdited { get; set; }
         public Guid StatusId { get; set; }
+        public Guid Id { get; internal set; }
     }
 }

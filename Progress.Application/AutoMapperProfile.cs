@@ -24,7 +24,8 @@ namespace Progress.Application
                 .ForMember(ucd => ucd.LastEdited, o => o.MapFrom(cs => cs.CreatedAt))
                 .ForMember(ucd => ucd.Name, o => o.MapFrom(cs => cs.BasicInformation.Name))
                 .ForMember(ucd => ucd.Title, o => o.MapFrom(cs => cs.BasicInformation.Title))
-                .ForMember(ucd => ucd.StatusId, o => o.MapFrom(cs => cs.Id));
+                .ForMember(ucd => ucd.StatusId, o => o.MapFrom(cs => cs.Id))
+                .ForMember(ucd => ucd.Id, o => o.MapFrom(cs => cs.UserCharacterId));
         }
     }
 }
