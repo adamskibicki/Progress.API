@@ -1,9 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Status;
+using System;
+using System.Reflection.Emit;
 
 namespace Progress.Application.Persistence
 {
+    public class SeededGuidGenerator
+    {
+        private readonly Random random;
+
+        public SeededGuidGenerator(int seed)
+        {
+            random = new Random(seed);
+        }
+
+        public Guid GetNext()
+        {
+            return Guid.Parse(string.Format("{0:X4}{1:X4}-{2:X4}-{3:X4}-{4:X4}-{5:X4}{6:X4}{7:X4}",
+                random.Next(0, 0xffff), random.Next(0, 0xffff),
+                random.Next(0, 0xffff),
+                random.Next(0, 0xffff) | 0x4000,
+                random.Next(0, 0x3fff) | 0x8000,
+                random.Next(0, 0xffff), random.Next(0, 0xffff), random.Next(0, 0xffff)));
+        }
+    }
+
     public class ApplicationDbContext : DbContext
     {
         public DbSet<Category> Categories { get; set; }
@@ -20,12 +42,20 @@ namespace Progress.Application.Persistence
 
         public DbSet<UserCharacter> UserCharacters { get; set; }
 
+        public DbSet<Skill> Skills { get; set; }
+
+        public DbSet<SkillVariable> SkillVariables { get; set; }
+
+        public DbSet<TierDescription> TierDescriptions { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var guidGenerator = new SeededGuidGenerator("Test".GetHashCode());
+
             string userCharacterId = "0da44e54-90ea-4ad0-a409-ea0cb1d38c4a";
 
             string characterStatusId = "afa42078-a071-4bea-978e-f439c713848c";
@@ -34,29 +64,29 @@ namespace Progress.Application.Persistence
             string enduranceStatId = "ab85915d-e66f-4460-96af-e90f171ccab5";
             string wisdomStatId = "c6474033-2e4c-4805-95f3-4fe22e9de88a";
 
-            string firstClassId = "c2782453-16ab-4d52-923d-97c6a2b40029";
-            string secondClassId = "453c74bc-e480-44c2-82ea-13e3e49f821b";
-            string thirdClassId = "6689fb11-732c-4fda-af01-abde9895dc16";
+            string healingClassId = "c2782453-16ab-4d52-923d-97c6a2b40029";
+            string ashenClassId = "453c74bc-e480-44c2-82ea-13e3e49f821b";
+            string spaceClassId = "6689fb11-732c-4fda-af01-abde9895dc16";
 
             string manaResourceId = "97f54c26-273e-47fc-b00f-7c5ad5b6cfae";
 
             modelBuilder.Entity<CharacterClass>().HasData(new CharacterClass
             {
-                Id = new Guid(firstClassId),
+                Id = new Guid(healingClassId),
                 CharacterStatusId = new Guid(characterStatusId),
                 Name = "The Cosmic Immortal",
                 Level = 1004,
             },
             new CharacterClass
             {
-                Id = new Guid(secondClassId),
+                Id = new Guid(ashenClassId),
                 CharacterStatusId = new Guid(characterStatusId),
                 Name = "The Pyroclastic Storm",
                 Level = 1001,
             },
             new CharacterClass
             {
-                Id = new Guid(thirdClassId),
+                Id = new Guid(spaceClassId),
                 CharacterStatusId = new Guid(characterStatusId),
                 Name = "The Sunforged Realmwalker",
                 Level = 1002,
@@ -153,35 +183,39 @@ namespace Progress.Application.Persistence
                 DisplayColor = "#000000",
                 Name = "Earth Magic"
             };
+            var auraCategory = new Category
+            {
+                Id = new Guid("cdb7b315-0277-451c-9ff0-ea5f1fce8c25"),
+                DisplayColor = "#000000",
+                Name = "Aura"
+            };
+            var arcaneMagicCategory = new Category
+            {
+                Id = new Guid("572ba72e-87df-45bf-9496-a2b9d8962c7d"),
+                DisplayColor = "#000000",
+                Name = "Arcane Magic"
+            };
+            var teleportationMagicCategory = new Category
+            {
+                Id = new Guid("f8362bfc-6004-43df-827f-17f21203c6f3"),
+                DisplayColor = "#000000",
+                Name = "Teleportation Magic"
+            };
+            var perceptionAuraCategory = new Category
+            {
+                Id = new Guid("65728378-090f-4c29-9e87-b282f489d028"),
+                DisplayColor = "#000000",
+                Name = "Perception Aura"
+            };
 
             modelBuilder.Entity<Category>().HasData(
-                new Category
-                {
-                    Id = new Guid("572ba72e-87df-45bf-9496-a2b9d8962c7d"),
-                    DisplayColor = "#000000",
-                    Name = "Arcane Magic"
-                },
+                arcaneMagicCategory,
                 bodyEnhancementCategory,
                 healingMagicCategory,
                 cosmicMagicCategory,
-                new Category
-                {
-                    Id = new Guid("cdb7b315-0277-451c-9ff0-ea5f1fce8c25"),
-                    DisplayColor = "#000000",
-                    Name = "Aura"
-                },
-                new Category
-                {
-                    Id = new Guid("f8362bfc-6004-43df-827f-17f21203c6f3"),
-                    DisplayColor = "#000000",
-                    Name = "Teleportation Magic"
-                },
-                new Category
-                {
-                    Id = new Guid("65728378-090f-4c29-9e87-b282f489d028"),
-                    DisplayColor = "#000000",
-                    Name = "Perception Aura"
-                },
+                auraCategory,
+                teleportationMagicCategory,
+                perceptionAuraCategory,
                 ashenMagicCategory,
                 fireMagicCategory,
                 spaceMagicCategory,
@@ -236,7 +270,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("20ac1928-5cff-4504-a926-e253c38891d8"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "Body enhancement magic is improved by 500%",
                     CategoryId = bodyEnhancementCategory.Id,
                     PercentagePointsOfCategoryIncrease = 500
@@ -244,7 +278,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("c2ef6ecc-a8ba-4d0c-a9fd-f0d3dfcf11cf"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "All healing magic skills are improved by 500%",
                     CategoryId = healingMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 500
@@ -252,7 +286,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("c37f99aa-4fe2-4ea0-9cbe-63a646a26d1a"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "All cosmic magic skills are improved by 250%",
                     CategoryId = cosmicMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 250
@@ -260,50 +294,50 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("26d1fd63-e8ce-47ff-9587-b43948baf4d5"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "Natural health regeneration is increased by 1% per minute",
                     PercentagePointsOfCategoryIncrease = 0
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("a9f8276e-272e-443d-a161-549e43525cce"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "Natural mana regeneration is increased by 1% per minute",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("6d66a14d-e883-4704-bc2d-8acbfbefecad"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "Food, water and sleep needed to sustain yourself are no longer required",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("d9c0563a-a568-4809-b798-bdf387475b38"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "You do not age",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("4a356fc3-234a-4e1e-9091-210132ff23d1"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "You can absorb and use 25% of the ambient mana around you",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("e58a8112-38b5-4970-b38d-53866b4c8543"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "All mana regeneration increases by 1% to a maximum of 100% for every second you are not hit by an enemy attack",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("5274cf3c-f1cb-4fc8-8175-8f202d7d47c3"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "Excess generated mana instead charges a second mana pool equaling your total health [0/125400]. Mana from this pool can be transferred into your main mana pool at will",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("1d2154a7-a236-4afa-b9cc-5f913c5a6468"),
-                    ClassId = new Guid(firstClassId),
+                    ClassId = new Guid(healingClassId),
                     Description = "You may infuse any barrier, wall, or magical armor with cosmic energy",
                 }
             };
@@ -311,7 +345,7 @@ namespace Progress.Application.Persistence
             var additionalClass1Modifier = new
             {
                 Id = new Guid("2218f3c7-591f-40eb-9f48-38b4f958440d"),
-                ClassId = new Guid(firstClassId),
+                ClassId = new Guid(healingClassId),
                 Description = "Your mana capacity is multiplied by five",
                 PercentagePointsOfCategoryIncrease = 500,
                 CategoryCalculationType = CategoryCalculationType.Multiplicative,
@@ -323,7 +357,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("988af334-4b7e-4c7e-ae51-c5f3362ae0ef"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "Body enhancement magic is improved by 500%",
                     CategoryId = bodyEnhancementCategory.Id,
                     PercentagePointsOfCategoryIncrease = 500
@@ -331,7 +365,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("ea583586-3ebb-4680-9092-250882d6c90f"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "All Ashen magic skills are improved by 500%",
                     CategoryId = ashenMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 500
@@ -339,7 +373,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("a37dff49-7a62-4355-b6d4-7dccc452a247"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "All Fire magic skills are improved by 250%",
                     CategoryId = fireMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 250
@@ -347,31 +381,31 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("9d0ab750-a179-4107-8349-e17d2d4dc88e"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "All fighting styles using hand to hand combat are more refined",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("268eb8e9-5be0-4d4d-b29d-0ce1f6bcacca"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "Your will is ash and heat",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("1382a487-16d5-4356-b1a2-a391cbaa7f53"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "You cannot be stunned by enemy attacks",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("6db597af-34bb-4660-ac70-e7d9bb482088"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "Your bones and muscles have vastly increased density",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("29185439-b3d7-4648-847d-7709cb46faa1"),
-                    ClassId = new Guid(secondClassId),
+                    ClassId = new Guid(ashenClassId),
                     Description = "Your heat generation is increased by 1000%",
                 }
             };
@@ -381,7 +415,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("a070e26f-c73c-487f-9fdd-d73286650e22"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Space Magic is improved by 500%",
                     CategoryId = spaceMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 500
@@ -389,13 +423,13 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("09e97cee-34b2-4aea-9b47-b7160339de10"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Resilience is increased by 500%",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("fe07af4f-38e6-4e99-9f9d-3bd29692bded"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Body Enhancement Magic is improved by 300%",
                     CategoryId = bodyEnhancementCategory.Id,
                     PercentagePointsOfCategoryIncrease = 300
@@ -403,7 +437,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("53b6d5e7-cd28-45a4-a7c8-72cc361b8e9b"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Fire Magic is improved by 200%",
                     CategoryId = fireMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 200
@@ -411,7 +445,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("8bb31795-7294-42f3-9347-1e8b31596065"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Flesh Magic is improved by 100%",
                     CategoryId = fleshMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 100
@@ -419,7 +453,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("a24ac0ce-4fc0-4f2c-ae22-dbed4a108808"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Healing Magic is improved by 100%",
                     CategoryId = healingMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 100
@@ -427,7 +461,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("2af0ee40-2ea0-4b2c-abc6-22a15b37fb19"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Mind Magic is improved by 100%",
                     CategoryId = mindMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 100
@@ -435,7 +469,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("d2168950-990e-42d5-9b43-8b556aeb4741"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Ice Magic is improved by 100%",
                     CategoryId = iceMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 100
@@ -443,7 +477,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("2cc5563c-4e6f-4785-9d7a-f334fc6600aa"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Lava Magic is improved by 100%",
                     CategoryId = lavaMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 100
@@ -451,7 +485,7 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("6c72a67a-beff-4d01-a746-3350677d2832"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Earth Magic is improved by 100%",
                     CategoryId = earthMagicCategory.Id,
                     PercentagePointsOfCategoryIncrease = 100
@@ -459,19 +493,19 @@ namespace Progress.Application.Persistence
                 new ClassModifier()
                 {
                     Id = new Guid("a0ee0c09-5d9f-4577-9d16-c597fb97d36d"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Your Soul has been strengthened by the Primordial Flame",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("cb4fb181-c7a8-4007-afdf-e68bcf328c9b"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Your skin grows more resilient",
                 },
                 new ClassModifier()
                 {
                     Id = new Guid("9c725771-e1b1-4a34-a2bf-db707b546077"),
-                    ClassId = new Guid(thirdClassId),
+                    ClassId = new Guid(spaceClassId),
                     Description = "Greatly increases the heat you can store within your body and soul",
                 },
             };
@@ -539,6 +573,420 @@ namespace Progress.Application.Persistence
                 }
             );
             #endregion
+
+            #region skills
+
+            var skillGuids = Enumerable.Range(1, 10).Select(x => guidGenerator.GetNext()).ToArray();
+
+            var skills = new Skill[]
+            {
+                new Skill()
+                {
+                    Id = skillGuids[0],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Cosmic Deconstruction",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[1],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "True Reconstruction",
+                    Level = 1,
+                    Tier = 4,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[2],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Embodiment of the Arcane",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[3],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Teleportation",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[4],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Limitless Domain",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[5],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Catalyst Core",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[6],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Timeless Perception",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[7],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Cycle of Creation",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[8],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Eternal Huntress",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = false,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[9],
+                    CharacterClassId = new Guid(healingClassId),
+                    Name = "Eternal Brawling",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = false,
+                    Type = SkillType.Passive,
+                }
+            };
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Send a pulse of deconstructing cosmic power into an object, spell, or creature within your domain with every motion using your arms, fists, fingers, legs, feet, or head. Your Intelligence stat enhances the damage potential.",
+                    "The amount of mana used per pulse can be regulated with a maximum of 5000 mana per pulse. You may charge each pulse with 5000 mana per second to a maximum of 25000 mana. Once cosmic power resides within a target, you can rip it out with a reversed motion to cause additional damage. Cosmic power within a target stacks, depending on their defensive measures and structure.",
+                    "You may choose to use Cosmic Deconstruction as a non intrusive attack, instead sending out a broad wave of deconstructing energy from you at the center. The same motion requirements as in the first tier apply. If used as a wave, the range of Cosmic Deconstruction is equal to the range of your domain and is more effective against magical constructs."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[0].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = healingMagicCategory.Id, SkillsId = skills[0].Id },
+                        new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[0].Id }
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Send a healing pulse of cosmic power into yourself or creatures within your domain. This skill can be channeled. In addition to health, True Reconstruction restores mana and heals damage to your soul.",
+                        "Your control is increased greatly, you can now focus your healing on specific parts of the body. As long as mana and health remains, your True Reconstruction will restore your body. Lose your head and see for yourself! Health loss and critical blows are recalculated due to the nature of your healing. You may restore magical constructs and enchantments with True Reconstruction.",
+                        "You have healed your body time and time again, knowing every cell and where it belongs. Sacrifice a large amount of mana to rush your healing to unprecedented speeds. Lack of knowledge about your body may result in heavy damage. Effect can be used on any creature or magical construct. Limited to 10’000 mana per use.",
+                        "You have healed yourself thousands of times. Have regrown lost limbs, have reformed lost organs. You have healed and protected your mind, all in pursuit of greater power. Healing to shield you. Healing to allow an exchange of blows, with those you would not otherwise be able to fight. A core ability for the Azarinth Healer, a terrifying tool for the Cosmic Immortal. You have grasped the true nature of Reconstruction. Not the healing spell of a savior, but a necessity for the battle healer you have become. Through the fourth tier, you have enhanced this ability to the pinnacle. Once active, cosmic energies will surge within your body. Not to heal wounds you have sustained, but to keep you fighting whatever enemy you face. To overwhelm the foes no other could dare stand against.\r\nIf you reach 0 points of health, all remaining mana is used to activate True Reconstruction, containing your essence in a set of powerful cosmic barriers protecting your remains from harm and restoring your life. This effect may activate once every 24 hours.\r\nFollowing benefits and changes will apply during use of the fourth tier:\r\n- All damage sustained is dealt to your mana instead of your health\r\n- The first stage of True Reconstruction will generate additional mana and health\r\n- All mana generation and absorption is doubled\r\n- Your body is pushed to the limits of cosmic power, enhancing all of your abilities\r\n- Your body sustains heavy damage from this flow of cosmic power. This ability will deactivate when your health drops below a certain point [1% - Set value] and cannot be used again for twice as long as it has been active\r\n- Once the 4th tier deactivates, a set of seven cosmic barriers appear around you to protect from enemy blows. You may control these barriers or allow them to automatically react to enemy attacks\r\n- You cannot use the third tier of True Reconstruction on your own body"
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[1].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = healingMagicCategory.Id, SkillsId = skills[1].Id },
+                        new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[1].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Your body glows with the power of the cosmos, increasing your resilience, speed, Intelligence, and Strength by <stats_increase>.",
+                        "Your sight, hearing and sense of smell is also affected by Embodiment of the Arcane.",
+                        "You are one with the Arcane. The skill’s upkeep has been removed. A static <wisdom_increase> of the base effect is applied to Wisdom. Does not affect the mana regeneration properties of the Wisdom stat."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[2].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = auraCategory.Id, SkillsId = skills[2].Id },
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[2].Id },
+                        new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[2].Id },
+                    }));
+
+            modelBuilder.Entity<SkillVariable>().HasData(
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[2].Id,
+                    Name = "stats_increase",
+                    BaseValue = 100,
+                    Unit = "%",
+                    CategoryCalculationType = CategoryCalculationType.Additive,
+                    VariableCalculationType = VariableCalculationType.Additive,
+                    //AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength" },
+                    
+                },
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[2].Id,
+                    Name = "wisdom_increase",
+                    BaseValue = 25,
+                    Unit = "%",
+                    BaseVariableName = "stats_increase",
+                    CategoryCalculationType = CategoryCalculationType.Additive,
+                    VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
+                    //AffectedStatNames = new string[] { "Wisdom" }
+                });
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Immediately appear anywhere in your domain or anywhere you can see with reliable clarity.",
+                        "The time between transfers is reduced greatly. No ground contact needed between transfers. Teleportation gains 3 charges, each with a separate cooldown. For 2 seconds after Teleportation is used, you may return to the original position in the fabric where the spell was initially activated.",
+                        "You may set ten destinations you touch. You may change each destination once per day. This cooldown is static. You may travel to each destination once every 25 minutes [12.5 minutes]. Cast time is reduced by a static 50% for destinations you have already teleported to."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[3].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = teleportationMagicCategory.Id, SkillsId = skills[3].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Perceive everything in a sphere around you while this skill is activated. The higher the level the further your domain reaches. You may drain mana from creatures and spells within your domain.",
+                        "Arcane dominion opens your senses to the arcane. A paramount skill both on and off the battlefield. Elements and spells you control within your dominion have increased harmony. You drain the remaining mana from creatures you kill inside of your domain.",
+                        "Your element manipulation skills are improved by a static 100% when used within your dominion. Improves any of your mana absorption or drain abilities within your domain."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[4].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = auraCategory.Id, SkillsId = skills[4].Id },
+                        new { CategoriesId = perceptionAuraCategory.Id, SkillsId = skills[4].Id },
+                        new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[4].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Your body was changed by magic. All pain is reduced greatly. Your body is 75% [1387.5%] more durable. You heal even fatal injuries without help of healing magic. Your natural Health and Mana regeneration is improved by 150% [2775%].",
+                        "The magic of the cosmos settles inside your body. Your resistance to magical, physical, and soul damage is increased by a static 35% [647.5%]. Your bones and muscles are five times as dense.",
+                        "Your body was battered and forged by magic. You absorb mana from enemy spells in your domain. Efficiency is determined by enemy mana used and your resistance to the type of magic. Mana cost for all skills reduced by a static 35%. Your body can absorb ambient mana. Amount dependent on availability and harmony."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[5].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = healingMagicCategory.Id, SkillsId = skills[5].Id },
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[5].Id },
+                        new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[5].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Vastly increases your perception and reflexes.",
+                        "Timeless Perception spikes for two seconds, should you be about to receive a blow that would take 50% or more of your health, or should your mind be incapacitated with an incoming blow. This can happen only once per hour.",
+                        "Your resilience and speed is doubled during the spike in perception. Increases usage to five times per hour. The effect duration is increased to three seconds and can be activated at will. You gain the ability to gauge enemy mana usage and may learn how strongly a direct hit of a spell will impact you. Increased ability to gauge incoming damage depending on your familiarity with the respective magic type."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[6].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[6].Id },
+                        new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[6].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "You have learned of Cosmic Deconstruction and True Reconstruction. Now you will learn of their Reversal.\r\nUpon activation, Cosmic Deconstruction will send a part of the struck enemy’s health and mana into yourself. No mana will be released on impact, rendering Cosmic Deconstruction’s offensive potential to zero.\r\nUpon activation, True Reconstruction will send a destructive force of channeled mana into yourself, a creature or magical construct within your domain, the healing aspects are reduced to zero.",
+                        "You may have both the original and reversed aspects activated at the same time. When an enemy partially or fully resists either Cosmic Deconstruction or True Reconstruction, you absorb the dissipating mana.",
+                        "Healing, power, resilience and speed. All requires balance. Your respective Deconstruction and Reconstruction spells have their potency increased by a static 25% of your median stat value. [488.75%]. You may channel health in addition to mana into the respective offensive uses of Archon Strike and Sentinel Reconstruction. Health cost to activate effects is reduced by a static 20%."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[7].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[7].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                     "Huntress turned Eternal. Your eyes are unmatched and so is your nose. Perceive the smallest irregularities in your surroundings as well as the ambient mana to find clues about your target’s whereabouts. Perceive the trails of dangerous prey.",
+                        "You gain a sense for the distress in the people around you. Amplify this by sacrificing mana. You gain a sense for the arcane, feeling even minor spells around you. As you practice to differentiate these spells, you will learn of their intent.",
+                        "Through Azarinth magic, you may mark an enemy or ally with the Eternal Mark. Allies may use the mark to send a short message to the Arcane Eternal once per day. The Arcane Eternal can send a short message to each non forcefully applied mark once per day. Each level in the third tier adds two additional marks that can be used. Marks forcefully applied have a limited duration."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[8].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[8].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "You have adapted the fighting style of the Azarinth school to something you now call your own. Damage inflicted with your own body and related skills is 110% [990%] higher. Your arms, fists, fingers, legs, and head deal a slight amount of arcane damage with each strike.",
+                        "Getting used to fighting in close quarters, your reaction time is increased to accommodate your increasing speed and control. Your bones are steeped with mana, increasing both their weight and resilience two fold.",
+                        "Eternal Brawling consists of more than offense alone. A true brawler knows when to stand and let an enemy strike. You gain knowledge about sustained injuries and damage from incoming attacks as they happen."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[9].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[9].Id },
+                        new { CategoriesId = arcaneMagicCategory.Id, SkillsId = skills[9].Id },
+                    }));
+
+            modelBuilder.Entity<Skill>().HasData(skills);
+
+            #endregion
+
+        }
+
+        private void AddTierDescriptionsToSkill(ModelBuilder modelBuilder, string[] tierDescriptions, Guid[] tierDescriptionIds, Guid skillId)
+        {
+            for (int i = 0; i < tierDescriptions.Length; i++)
+            {
+                modelBuilder.Entity<TierDescription>().HasData(
+                    new TierDescription()
+                    {
+                        Id = tierDescriptionIds[i],
+                        Description = tierDescriptions[i],
+                        Tier = i,
+                        SkillId = skillId
+                    });
+            }
         }
     }
 }

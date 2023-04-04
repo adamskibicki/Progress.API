@@ -26,6 +26,9 @@ namespace Progress.Application
                 .ForMember(ucd => ucd.Title, o => o.MapFrom(cs => cs.BasicInformation.Title))
                 .ForMember(ucd => ucd.StatusId, o => o.MapFrom(cs => cs.Id))
                 .ForMember(ucd => ucd.Id, o => o.MapFrom(cs => cs.UserCharacterId));
+            CreateMap<Skill, SkillDto>();
+            CreateMap<TierDescription, TierDescriptionDto>();
+            CreateMap<SkillVariable, SkillVariableDto>();
         }
     }
 }

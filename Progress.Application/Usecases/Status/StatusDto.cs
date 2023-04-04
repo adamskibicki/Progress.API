@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Progress.Application.Persistence.Entities;
 
 namespace Progress.Application.Usecases.Status
 {
@@ -13,6 +14,7 @@ namespace Progress.Application.Usecases.Status
 
     public class ClassDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
         public ClassModifierDto[] Modifiers { get; set; }
@@ -21,6 +23,7 @@ namespace Progress.Application.Usecases.Status
 
     public class ClassModifierDto
     {
+        public Guid Id { get; set; }
         public string Description { get; set; }
         public CategoryDto Category { get; set; }
         public int PercentagePointsOfCategoryIncrease { get; set; }
@@ -38,10 +41,11 @@ namespace Progress.Application.Usecases.Status
 
     public class SkillDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
         public int Tier { get; set; }
-        public string[] TierDescriptions { get; set; }
+        public TierDescriptionDto[] TierDescriptions { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public SkillType Type { get; set; }
         public CategoryDto[] Categories { get; set; }
@@ -49,21 +53,23 @@ namespace Progress.Application.Usecases.Status
         public SkillVariableDto[] Variables { get; set; }
     }
 
+    public class TierDescriptionDto
+    {
+        public Guid Id { get; set; }
+        public int Tier { get; set; }
+        public string Description { get; set; }
+    }
+
     public class SkillVariableDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public int BaseValue { get; set; }
         public string Unit { get; set; }
-        /// <summary>
-        /// How it affects other calculations
-        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public CategoryCalculationType CategoryCalculationType { get; set; }
         public string BaseVariableName { get; set; }
         public string[] AffectedStatNames { get; set; }
-        /// <summary>
-        /// How variable is calculated itself
-        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public VariableCalculationType VariableCalculationType { get; set; }
     }

@@ -9,5 +9,6 @@ namespace Progress.Application.Persistence.Entities
         public List<ClassModifier> ClassModifiers { get; set; }
         public Guid CharacterStatusId { get; set; }
         public CharacterStatus CharacterStatus { get; set; }
+        public List<Skill> Skills { get; set; }
     }
 }
