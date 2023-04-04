@@ -6,26 +6,6 @@ using System.Reflection.Emit;
 
 namespace Progress.Application.Persistence
 {
-    public class SeededGuidGenerator
-    {
-        private readonly Random random;
-
-        public SeededGuidGenerator(int seed)
-        {
-            random = new Random(seed);
-        }
-
-        public Guid GetNext()
-        {
-            return Guid.Parse(string.Format("{0:X4}{1:X4}-{2:X4}-{3:X4}-{4:X4}-{5:X4}{6:X4}{7:X4}",
-                random.Next(0, 0xffff), random.Next(0, 0xffff),
-                random.Next(0, 0xffff),
-                random.Next(0, 0xffff) | 0x4000,
-                random.Next(0, 0x3fff) | 0x8000,
-                random.Next(0, 0xffff), random.Next(0, 0xffff), random.Next(0, 0xffff)));
-        }
-    }
-
     public class ApplicationDbContext : DbContext
     {
         public DbSet<Category> Categories { get; set; }
@@ -54,7 +34,7 @@ namespace Progress.Application.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var guidGenerator = new SeededGuidGenerator("Test".GetHashCode());
+            var guidGenerator = new SeededGuidGenerator(1501381288);
 
             string userCharacterId = "0da44e54-90ea-4ad0-a409-ea0cb1d38c4a";
 
@@ -69,6 +49,8 @@ namespace Progress.Application.Persistence
             string spaceClassId = "6689fb11-732c-4fda-af01-abde9895dc16";
 
             string manaResourceId = "97f54c26-273e-47fc-b00f-7c5ad5b6cfae";
+
+            #region classes and statuses
 
             modelBuilder.Entity<CharacterClass>().HasData(new CharacterClass
             {
@@ -114,6 +96,8 @@ namespace Progress.Application.Persistence
                     FourthTierSkillpoints = 1,
                     ThirdTierGeneralSkillpoints = 3,
                 });
+
+            #endregion
 
             #region categories
 
@@ -576,6 +560,8 @@ namespace Progress.Application.Persistence
 
             #region skills
 
+            #region healing class skills
+
             var skillGuids = Enumerable.Range(1, 10).Select(x => guidGenerator.GetNext()).ToArray();
 
             var skills = new Skill[]
@@ -682,6 +668,8 @@ namespace Progress.Application.Persistence
                 }
             };
 
+            modelBuilder.Entity<Skill>().HasData(skills);
+
             AddTierDescriptionsToSkill(modelBuilder,
                 new string[]
                 {
@@ -772,7 +760,7 @@ namespace Progress.Application.Persistence
                     CategoryCalculationType = CategoryCalculationType.Additive,
                     VariableCalculationType = VariableCalculationType.Additive,
                     //AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength" },
-                    
+
                 },
                 new SkillVariable()
                 {
@@ -968,7 +956,685 @@ namespace Progress.Application.Persistence
                         new { CategoriesId = arcaneMagicCategory.Id, SkillsId = skills[9].Id },
                     }));
 
+            #endregion
+
+            #region ashen class skills
+
+            skillGuids = Enumerable.Range(1, 10).Select(x => guidGenerator.GetNext()).ToArray();
+
+            skills = new Skill[]
+            {
+                new Skill()
+                {
+                    Id = skillGuids[0],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Ash Scale Armor",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[1],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Draconic Core",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[2],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Pyroclastic Flow",
+                    Level = 1,
+                    Tier = 4,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[3],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Volcanic Source",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[4],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Scorching Intrusion",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[5],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Mastery of Ash",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[6],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Draconic Ash Wings",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[7],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Embodiment of Heat",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[8],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Vision of Ash",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = false,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[9],
+                    CharacterClassId = new Guid(ashenClassId),
+                    Name = "Embered Form",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+            };
+
             modelBuilder.Entity<Skill>().HasData(skills);
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "An armor of ash and hardened volcanic glass scales protects and fuses partially with your body, forming at your will. The Armor increases your resistance to heat and fire, as well as your overall resilience by 200% [3200%].",
+                        "The strength of your Resistance skills and your wings also benefit from Ash Scale Armor. The Armor is a part of your body. It benefits from natural regeneration. You can feel through your armor and you can heal it. Your Ash Scale Armor repairs minor damage on its own. If you armor is penetrated to the lowest layer, an explosion of heated smoke and volcanic glass is released at your enemy if you do not suppress the effect.",
+                        "Increases the defensive capabilities of all ash you control. Increase the ash used to form your armor by up to a static 500%. The additional ash used requires conscious manipulation. You may use Ash Scale Armor to defend willing allies. Amount of required ash dependent on size of the target. You may increase the ash used by another static 500%, reducing your total speed by a static 15% for each 100% of additional increase."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[0].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[0].Id },
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[0].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Heat glows within you, raising your resilience, speed, Strength, Intelligence and Dexterity by <stats_increase>. Your learn how to generate and store vast amounts of heat within your Draconic Core or your magical constructs.",
+                        "The longer you fight with Draconic Core active, the deeper it roots. Each second of fighting adds 1% more power to the skill with a maximum of a static [250%]. Once no longer engaged in battle, 1% of additionally generated power is lost per second.",
+                        "Familiarity with the skill removes its upkeep. You can choose to increase your weight by 1% [18.5%] for each passing second to a maximum of a static [1500%], increasing your natural health regeneration, heat generation, and resilience by the same factor."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[1].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = auraCategory.Id, SkillsId = skills[1].Id },
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[1].Id },
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[1].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[1].Id },
+                    }));
+
+            modelBuilder.Entity<SkillVariable>().HasData(
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[1].Id,
+                    Name = "stats_increase",
+                    BaseValue = 100,
+                    Unit = "%",
+                    CategoryCalculationType = CategoryCalculationType.Additive,
+                    VariableCalculationType = VariableCalculationType.Additive,
+                    //AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength", "Dexterity" }
+                });
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                     "Create ash, smoke, and volcanic glass in a certain radius around you.",
+                        "You may vastly increase the density and heat of your ash, smoke, and volcanic glass.",
+                        "You have proven your dedication. The Pyroclastic Flow moves to aid and destroy at your whims. The amount of ash, smoke, and volcanic glass you can create is vastly increased.",
+                        "You are the Pyroclastic Storm. The Fourth Tier allows for true harmony."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[2].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[2].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[2].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Vastly increase the heat in your body and release it in a blast or continuous heat around you.",
+                        "The fires run deep. The heat you may reach is only limited by your very life. Your resistance to heat held within your body is tripled.",
+                        "Focus on release to change the blast into a cone of destruction sent out of either arm. You may store heat within any ash, smoke, or volcanic glass that you control. Creations not connected to you release their stored heat upon a strong impact in a blast around it or when you will it. You learn to send out any stored heat as waves through your Pyroclastic Flow."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[3].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[3].Id },
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[3].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[3].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Burn the inside of whatever your body or your magical constructs touch with a surge of heat or release the attack in a violent burst.",
+                        "The heat burns on. Targets hit will have fire burning through or on them. Continuous use of Scorching Intrusion will increase the stored energy up to a breaking point where all is released in a violent explosion of fire and heat. Breaking point is dependent on enemy resilience and heat resistance.",
+                        "Scorching Intrusion damages mana intrusion capabilities of defensive enchantments, natural- as well as manufactured armor. Once a target is affected by Scorching Intrusion and in contact with your body or your magical constructs, you may increase the stored heat for up to a static 1000 mana per second to faster reach the breaking point."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[4].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[4].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[4].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "You are one with Ash and Heat, your creations blotting out the very suns.",
+                        "Your understanding grows, allowing you to create greater change in ash, smoke, and volcanic glass. Imbue mana and complex commands into your creations. Ash and volcanic glass you imbue retains its form until the mana is used up. Imbued creations retain a static 10% of your ambient and enemy spell mana absorption.",
+                        "The elements themselves become an extension of your body, an extension of your will, for as long as they stay in physical contact with you. Ash and volcanic glass not connected benefits from passive abilities enhancing your body. You may imbue commands into ash and ember you have imbued with mana. Once per hour, you may create up to 25 copies of your form made of ash and volcanic glass, all instantly imbued with the same or separate complex commands. Each copy receives one random Class skill from any of your Classes. Should a spell require health or stamina to function, you may choose to imbue these resources as well. Copies lose access to this skill after initially imbued resources are used up."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[5].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[5].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Your understanding of the Pyroclastic Flow allows you to create scaled wings from ash and volcanic glass. Bring terror from above and deliver your wrath, your wings carrying you no matter how dense, how heavy, or how injured you are.",
+                        "Your wings become more dense and tangible, able to help you defend and attack. When active, your wings become a part of your body.",
+                        "Shape and form your wings to your liking, now directly affected by your control. An added tail shall make you one with the skies above, not a mere human imitating flight but one who revels in it. You may charge your wings with mana and stamina to dramatically increase your flight velocity at the cost of heavily reduced control. Your resilience is increased greatly during a charged flight. If wings are active, this charge may be applied to created magical constructs for a vast increase in the velocity of projectiles. Resilience bonuses do not apply to such constructs."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[6].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[6].Id },
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[6].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Increases your reflexes and speed by <stats_increase>. Your ability to avoid damage to your vitals when dodging increases. A static <vitality_increase> of this bonus is applied to Vitality.",
+                        "Your muscles grow more dense. For each Resistance skill your body becomes tougher. First tier Resistances equal a static 5% increase, second tier equal a static 10% increase, third tier equal a static 15% increase [<endurance_increase>]. Additionally affects your endurance.",
+                        "You can choose to allow magic damage to bypass your related resistance skills. If this effect is active, any absorption abilities related to such magic damage is increased. Effect is canceled automatically upon reaching 50% of your health. Each Resistance skill in the second tier or higher increases your heat generation and the potential density of your created ash and volcanic glass by a static 5% [225%]. Each Resistance skill in the third tier increases the speed of your created projectiles by 10% [260%]."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[7].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[7].Id },
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[7].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[7].Id },
+                    }));
+
+            modelBuilder.Entity<SkillVariable>().HasData(
+                    new SkillVariable()
+                    {
+                        Id = guidGenerator.GetNext(),
+                        SkillId = skills[7].Id,
+                        Name = "stats_increase",
+                        BaseValue = 75,
+                        Unit = "%",
+                        CategoryCalculationType = CategoryCalculationType.Additive,
+                        VariableCalculationType = VariableCalculationType.Additive,
+                        //AffectedStatNames = new string[] { "Reflexes", "Speed" }
+                    },
+                    new SkillVariable()
+                    {
+                        Id = guidGenerator.GetNext(),
+                        SkillId = skills[7].Id,
+                        Name = "vitality_increase",
+                        BaseValue = 25,
+                        Unit = "%",
+                        BaseVariableName = "stats_increase",
+                        CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
+                        VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
+                        //AffectedStatNames = new string[] { "Vitality" }
+                    },
+                    new SkillVariable()
+                    {
+                        Id = guidGenerator.GetNext(),
+                        SkillId = skills[7].Id,
+                        Name = "endurance_increase",
+                        BaseValue = 625,
+                        Unit = "%",
+                        CategoryCalculationType = CategoryCalculationType.Additive,
+                        VariableCalculationType = VariableCalculationType.None,
+                        //AffectedStatNames = new string[] { "Endurance" }
+                    });
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Increases your perception by 65% [780%] when fighting.",
+                        "Opportunity calls, you notice possible critical weak points on enemies with more ease. You can choose to see through ash and embers.",
+                        "Your eyes are vastly improved. Great distances and a lack of light won’t pose a problem to you anymore. You can control ash and embers that you can see."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[8].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[8].Id },
+                        new { CategoriesId = ashenMagicCategory.Id, SkillsId = skills[8].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "You are one with the fighting style of Ash. Damage inflicted is 85% [850%] higher.",
+                        "Adds density to your bones, muscles and skin to increase strength, speed and damage. Base body weight is doubled. The abuse your body takes from your own strikes and their feedback is reduced.",
+                        "Reduces stamina consumption by a static 35%. Mana intrusion attacks formed or charged within your arms, hands, fingers, legs, feet, or your head can instead be converted into a purely physical damage increase to the executed attack. Be aware that this increase will be heavily demanding for your body."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[9].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[9].Id },
+                    }));
+
+            #endregion
+
+            #region space class skills
+
+            skillGuids = Enumerable.Range(1, 6).Select(x => guidGenerator.GetNext()).ToArray();
+
+            skills = new Skill[]
+            {
+                new Skill()
+                {
+                    Id = skillGuids[0],
+                    CharacterClassId = new Guid(spaceClassId),
+                    Name = "The Primordial Flame",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[1],
+                    CharacterClassId = new Guid(spaceClassId),
+                    Name = "Framework Disruption",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[2],
+                    CharacterClassId = new Guid(spaceClassId),
+                    Name = "Sunbound Creation",
+                    Level = 1,
+                    Tier = 4,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[3],
+                    CharacterClassId = new Guid(spaceClassId),
+                    Name = "Cosmic Shape",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Active,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[4],
+                    CharacterClassId = new Guid(spaceClassId),
+                    Name = "Fabric Alteration",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+                new Skill()
+                {
+                    Id = skillGuids[5],
+                    CharacterClassId = new Guid(spaceClassId),
+                    Name = "Reality Warp",
+                    Level = 30,
+                    Tier = 3,
+                    Enhanced = true,
+                    Type = SkillType.Passive,
+                },
+            };
+
+            modelBuilder.Entity<Skill>().HasData(skills);
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Bring upon your enemies, the power of the suns themselves, burning away your health in the exchange for devastating light, heat, and energy. Your flames are limitless and form at your will. All of your spells and your body are infused with the Primordial Flame, dealing lingering damage to all within the fabric. You are immune to stunning, fear, and shout abilities. Your resilience is increased by 100% [2350%]",
+                        "The bright flame settles within your core. The Primordial Flame now affects enemy health, mana, and stamina regeneration. This effect is higher for areas directly touched by the Primordial Flame.",
+                        "You may infuse your magical constructs with the Primordial Flame. For each level in the third tier, the skill’s upkeep is reduced by a static 50 [1500] points of health per second and you may sacrifice an additional static 500 [15000] points of health per second to enhance the skill’s effects. The Primordial Flames return a static 10% of all health, stamina, and mana burned away so long as the spell is active."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[0].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = auraCategory.Id, SkillsId = skills[0].Id },
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[0].Id },
+                        new { CategoriesId = spaceMagicCategory.Id, SkillsId = skills[0].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[0].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Shift space to your will, making frameworks or parts of frameworks appear somewhere else. Yes. That means you can teleport someone’s head off of their shoulders. Should you do it? Probably not.",
+                        "You may change the orientation of the objects you displace. Should you be unable to affect a framework with the initial spell usage, you may channel up to a static 1000 mana per second into it to cause the desired effect.",
+                        "You may choose two flat areas and connect them through space. At the time of marking an area, it has to be within the range of Framework Disruption. Ten sets of connections can be upheld at a time with exponential costs."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[1].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = spaceMagicCategory.Id, SkillsId = skills[1].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Expending a large amount of mana and health, you can temporarily summon a new reality around your form, burning with the Primordial Flame and shielded by the fabric itself. Absorb a part of all magic that tries to affect your creation, depending on your understanding and resistance. All regeneration and healing is doubled in this state. Your movements are impaired as your very form is rejected by the true fabric that surrounds you.",
+                        "Resilience bonuses from skills are doubled when entering your Sunbound Creation. During the shift, you cannot be moved by anything but your will. Your weight increases a hundred fold while this spell is active. You may incorporate nearby allies into your creation, protecting them for an additional cost of mana and health.",
+                        "The Primordial Flame wills itself into existence, your control and its power increasing dramatically while Sunbound Creation is active. Increases the power of all space manipulation while the spell is active. Greatly reduces the activation time of Sunbound Creation. The longer this spell remains active, the more powerful its effects become.",
+                        "You have delved into the secrets of creation. Inside of your reality, you are not part of the Fabric, but you have learned to navigate through the mesh, and you have learned how to affect the true fabric with all that you can form. While Sunbound Creation is active, you gain the following benefits:\r\n- Your space manipulation of frameworks outside of your creation is vastly improved.\r\n- Your vision is no longer distorted, but clear, if you will it so.\r\n- The Primordial Flame burns at your will, vastly improved and burning with the very heat of the stars\r\n- You may use every spell within your Sunbound Creation. Limitations exist in regards to movement and teleportation of yourself.\r\n- You learn to move at a slow pace through the fabric, pushing your creation through known reality."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[2].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = spaceMagicCategory.Id, SkillsId = skills[2].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[2].Id },
+                        new { CategoriesId = healingMagicCategory.Id, SkillsId = skills[2].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "The Primordial Flame flows through your veins, increasing your resilience by <resilience_increase> 75% [1762.5%]. Increases your physical damage resistance by 15% [352.5%]. Increases your magic damage resistance by 15% [352.5%]. You won’t be fazed anymore by heavy damage or powerful sources of light and sound. Your natural regeneration can heal any injury.",
+                        "Your body has withstood incredible damage, endured the hardships of battle. The fires flowing through you have hardened your bones and muscles. Your health is increased by <vitality_increase> 35% [822.5%].",
+                        "Your ability to adapt to your enemy grows. Continued battle against the same foe or species of monster increases damage reduction against their attacks by 2.5% [58.75%] per minute to a maximum of a static 50%. This effect will remain even after a battle has ended. The Cosmic Shape is released should you reach low health [0.1% - set value]. Your mana [100% - set value] will be used to create both spatial shields and the Primordial Flame to prevent death. This effect can only occur once every three hours."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[3].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[3].Id },
+                        new { CategoriesId = spaceMagicCategory.Id, SkillsId = skills[3].Id },
+                        new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[3].Id },
+                    }));
+
+            modelBuilder.Entity<SkillVariable>().HasData(
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[3].Id,
+                    BaseValue = 75,
+                    //AffectedStatNames = new string[] { "Resilience" },
+                    CategoryCalculationType = CategoryCalculationType.Additive,
+                    VariableCalculationType = VariableCalculationType.Additive,
+                    Name = "resilience_increase",
+                    Unit = "%",
+                },
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[3].Id,
+                    BaseValue = 35,
+                    //AffectedStatNames = new string[] { "Vitality" },
+                    CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
+                    VariableCalculationType = VariableCalculationType.Additive,
+                    Name = "vitality_increase",
+                    Unit = "%",
+                });
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "You have learned to see and manipulate the ever present spatial fabric. You gain the ability to move anything within the fabric with a mere gesture. Greatly improves the power of your manipulation and reduces its cost.",
+                        "Further understanding of the spatial fabric allows you to manipulate its forces with greater ease and higher intensity. You learn to perceive even the tiniest ripples in space. In the case of active fissures, you find yourself able to peer into the other side. You gain the ability to anchor a spatial pocket to your very essence. Storage increases with the skill’s level. You gain the ability to glimpse through the fabric at any anchors you have set within.",
+                        "You have peered through the fabric of space itself and have learned to unravel its intricate structure. You gain the ability to perceive and differentiate magical frameworks and how to manipulate them within your space without failure. Charge simple manipulation attempts with up to 500 [10000] points of mana. You learn how to damage existing frameworks. Results may vary. Your experience with the fabric allows you to imbue your eyes with mana, to perceive and manipulate old tears in the mesh where cracks had formed or beings have traveled through the realms."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[4].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = bodyEnhancementCategory.Id, SkillsId = skills[4].Id },
+                        new { CategoriesId = spaceMagicCategory.Id, SkillsId = skills[4].Id },
+                    }));
+
+
+
+            AddTierDescriptionsToSkill(modelBuilder,
+                new string[]
+                {
+                    "Space wields easier for you, allowing you to unravel its mysteries. Teleportation abilities can be used again three times as fast and you can travel ten times as far. You notice fissures between realms at a distance of 50 [200] kilometers. This distance can vary depending on the size and extent of the fissure.",
+                        "Prevent enemy teleportation spells within a sphere around you at a radius of 50 meters. You cannot teleport while this skill is active.",
+                        "Your understanding of space magic grows. You learn to latch on to ongoing teleportation spells with your own teleportation abilities. Long range and channeled teleportation spells have their range doubled and their cooldown as well as cost reduced by half."
+                },
+                new Guid[]
+                {
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                    guidGenerator.GetNext(),
+                },
+                skills[5].Id);
+
+            modelBuilder.Entity<Skill>().HasMany(s => s.Categories).WithMany(c => c.Skills)
+                .UsingEntity(j => j
+                    .ToTable("CategorySkill")
+                    .HasData(new[]
+                    {
+                        new { CategoriesId = spaceMagicCategory.Id, SkillsId = skills[5].Id },
+                    }));
+
+
+            #endregion
 
             #endregion
 
@@ -983,7 +1649,7 @@ namespace Progress.Application.Persistence
                     {
                         Id = tierDescriptionIds[i],
                         Description = tierDescriptions[i],
-                        Tier = i,
+                        Tier = i + 1,
                         SkillId = skillId
                     });
             }

@@ -655,12 +655,12 @@ namespace Progress.Application.Usecases.Status
                     //case "The Cosmic Immortal":
                     //    c.Skills = cosmicImmortalSkills;
                     //    break;
-                    case "The Pyroclastic Storm":
-                        c.Skills = pyroclasticStormSkills;
-                        break;
-                    case "The Sunforged Realmwalker":
-                        c.Skills = sunforgedRealmwalkerSkills;
-                        break;
+                    //case "The Pyroclastic Storm":
+                    //    c.Skills = pyroclasticStormSkills;
+                    //    break;
+                    //case "The Sunforged Realmwalker":
+                    //    c.Skills = sunforgedRealmwalkerSkills;
+                    //    break;
                 }
             }
 

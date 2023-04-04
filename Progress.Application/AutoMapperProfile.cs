@@ -12,7 +12,8 @@ namespace Progress.Application
         {
             CreateMap<Category, CategoryDto>();
             CreateMap<AddNewCategoryCommand, Category>()
-                .ForMember(c => c.Id, o => o.Ignore());
+                .ForMember(c => c.Id, o => o.Ignore())
+                .ForMember(c => c.Skills, o => o.Ignore());
             CreateMap<Resource, ResourceDto>();
             CreateMap<BasicInformation, BasicInformationDto>();
             CreateMap<Stat, StatDto>();
@@ -28,7 +29,8 @@ namespace Progress.Application
                 .ForMember(ucd => ucd.Id, o => o.MapFrom(cs => cs.UserCharacterId));
             CreateMap<Skill, SkillDto>();
             CreateMap<TierDescription, TierDescriptionDto>();
-            CreateMap<SkillVariable, SkillVariableDto>();
+            CreateMap<SkillVariable, SkillVariableDto>()
+                .ForMember(svd => svd.AffectedStatNames, o => o.Ignore());
         }
     }
 }
