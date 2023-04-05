@@ -17,7 +17,7 @@ namespace Progress.Application.Persistence.Entities
         /// How variable is calculated itself
         /// </summary>
         public VariableCalculationType VariableCalculationType { get; set; }
-        public Stat[] AffectedStats { get; set; }
+        public List<SkillVariableStat> AffectedStats { get; set; }
         public Guid SkillId { get; set; }
         public Skill Skill { get; set; }
     }

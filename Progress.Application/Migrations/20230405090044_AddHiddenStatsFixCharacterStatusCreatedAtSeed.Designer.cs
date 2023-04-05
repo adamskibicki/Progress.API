@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Progress.Application.Persistence;
 
@@ -11,9 +12,11 @@ using Progress.Application.Persistence;
 namespace Progress.Application.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230405090044_AddHiddenStatsFixCharacterStatusCreatedAtSeed")]
+    partial class AddHiddenStatsFixCharacterStatusCreatedAtSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1293,24 +1296,6 @@ namespace Progress.Application.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Progress.Application.Persistence.Entities.SkillVariableStat", b =>
-                {
-                    b.Property<Guid>("StatId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SkillVariableId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("StatId", "SkillVariableId");
-
-                    b.HasIndex("SkillVariableId");
-
-                    b.ToTable("SkillVariableStats");
-                });
-
             modelBuilder.Entity("Progress.Application.Persistence.Entities.Stat", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1326,12 +1311,17 @@ namespace Progress.Application.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("SkillVariableId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Value")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CharacterStatusId");
+
+                    b.HasIndex("SkillVariableId");
 
                     b.ToTable("Stats");
 
@@ -2182,25 +2172,6 @@ namespace Progress.Application.Migrations
                     b.Navigation("Skill");
                 });
 
-            modelBuilder.Entity("Progress.Application.Persistence.Entities.SkillVariableStat", b =>
-                {
-                    b.HasOne("Progress.Application.Persistence.Entities.SkillVariable", "SkillVariable")
-                        .WithMany("AffectedStats")
-                        .HasForeignKey("SkillVariableId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Progress.Application.Persistence.Entities.Stat", "Stat")
-                        .WithMany("AffectingSkillVariables")
-                        .HasForeignKey("StatId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("SkillVariable");
-
-                    b.Navigation("Stat");
-                });
-
             modelBuilder.Entity("Progress.Application.Persistence.Entities.Stat", b =>
                 {
                     b.HasOne("Progress.Application.Persistence.Entities.CharacterStatus", "CharacterStatus")
@@ -2208,6 +2179,10 @@ namespace Progress.Application.Migrations
                         .HasForeignKey("CharacterStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Progress.Application.Persistence.Entities.SkillVariable", null)
+                        .WithMany("AffectedStats")
+                        .HasForeignKey("SkillVariableId");
 
                     b.Navigation("CharacterStatus");
                 });
@@ -2254,11 +2229,6 @@ namespace Progress.Application.Migrations
             modelBuilder.Entity("Progress.Application.Persistence.Entities.SkillVariable", b =>
                 {
                     b.Navigation("AffectedStats");
-                });
-
-            modelBuilder.Entity("Progress.Application.Persistence.Entities.Stat", b =>
-                {
-                    b.Navigation("AffectingSkillVariables");
                 });
 
             modelBuilder.Entity("Progress.Application.Persistence.Entities.UserCharacter", b =>

@@ -133,6 +133,7 @@ namespace Progress.Application.Usecases.Status
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Value { get; set; }
+        public bool IsHidden { get; set; }
     }
 
     public class BasicInformationDto

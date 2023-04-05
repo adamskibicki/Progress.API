@@ -28,27 +28,49 @@ namespace Progress.Application.Persistence
 
         public DbSet<TierDescription> TierDescriptions { get; set; }
 
+        public DbSet<SkillVariableStat> SkillVariableStats { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<SkillVariableStat>()
+                .HasKey(svs => new {svs.StatId, svs.SkillVariableId});
+            modelBuilder.Entity<SkillVariableStat>()
+                .HasOne(svs => svs.Stat)
+                .WithMany(s => s.AffectingSkillVariables)
+                .HasForeignKey(svs => svs.StatId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<SkillVariableStat>()
+                .HasOne(svs => svs.SkillVariable)
+                .WithMany(sv => sv.AffectedStats)
+                .HasForeignKey(svs => svs.SkillVariableId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
             var guidGenerator = new SeededGuidGenerator(1501381288);
 
             string userCharacterId = "0da44e54-90ea-4ad0-a409-ea0cb1d38c4a";
 
             string characterStatusId = "afa42078-a071-4bea-978e-f439c713848c";
 
-            string vitalityStatId = "1bf1d8dd-7cc3-486d-bb26-0bde4ee439df";
-            string enduranceStatId = "ab85915d-e66f-4460-96af-e90f171ccab5";
-            string wisdomStatId = "c6474033-2e4c-4805-95f3-4fe22e9de88a";
-
             string healingClassId = "c2782453-16ab-4d52-923d-97c6a2b40029";
             string ashenClassId = "453c74bc-e480-44c2-82ea-13e3e49f821b";
             string spaceClassId = "6689fb11-732c-4fda-af01-abde9895dc16";
 
             string manaResourceId = "97f54c26-273e-47fc-b00f-7c5ad5b6cfae";
+
+            string vitalityStatId = "1bf1d8dd-7cc3-486d-bb26-0bde4ee439df";
+            string enduranceStatId = "ab85915d-e66f-4460-96af-e90f171ccab5";
+            string wisdomStatId = "c6474033-2e4c-4805-95f3-4fe22e9de88a";
+            string strengthStatId = "de4b423f-4718-4e26-9d75-14f4a1581b37";
+            string dexterityStatId = "20cce93e-f883-4860-be2f-4cdbd0c6e3be";
+            string intelligenceStatId = "047e7614-496d-4519-a784-6dec5e753571";
+            string resilienceStatId = "ec4aaeb2-2caa-43f0-8c44-3c8374d0cb5d";
+            string speedStatId = "170c68c3-2261-4063-9460-360144fb9597";
+            string reflexesStatId = "6c7beb1c-10bd-4e10-a019-82fb9c24115a";
 
             #region classes and statuses
 
@@ -506,54 +528,79 @@ namespace Progress.Application.Persistence
                     Id = new Guid(characterStatusId),
                     UnspentStatpoints = 25,
                     UserCharacterId = new Guid(userCharacterId),
-                    CreatedAt = DateTimeOffset.UtcNow,
+                    CreatedAt = new DateTimeOffset(new DateTime(2023, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified).AddTicks(0), new TimeSpan(0, 0, 0, 0, 0)),
                 });
 
             modelBuilder.Entity<Resource>().HasData(resources);
 
             #region stats
+
             modelBuilder.Entity<Stat>().HasData(
-                new
+                new Stat
                 {
                     CharacterStatusId = new Guid(characterStatusId),
                     Id = new Guid(vitalityStatId),
                     Name = "Vitality",
                     Value = 3800
                 },
-                new
+                new Stat
                 {
                     CharacterStatusId = new Guid(characterStatusId),
                     Id = new Guid(enduranceStatId),
                     Name = "Endurance",
                     Value = 600
                 },
-                new
+                new Stat
                 {
                     CharacterStatusId = new Guid(characterStatusId),
-                    Id = new Guid("de4b423f-4718-4e26-9d75-14f4a1581b37"),
+                    Id = new Guid(strengthStatId),
                     Name = "Strength",
                     Value = 860
                 },
-                new
+                new Stat
                 {
                     CharacterStatusId = new Guid(characterStatusId),
-                    Id = new Guid("20cce93e-f883-4860-be2f-4cdbd0c6e3be"),
+                    Id = new Guid(dexterityStatId),
                     Name = "Dexterity",
                     Value = 610
                 },
-                new
+                new Stat
                 {
                     CharacterStatusId = new Guid(characterStatusId),
-                    Id = new Guid("047e7614-496d-4519-a784-6dec5e753571"),
+                    Id = new Guid(intelligenceStatId),
                     Name = "Intelligence",
                     Value = 3770
                 },
-                new
+                new Stat
                 {
                     CharacterStatusId = new Guid(characterStatusId),
                     Id = new Guid(wisdomStatId),
                     Name = "Wisdom",
                     Value = 4000
+                },
+                new Stat
+                {
+                    CharacterStatusId = new Guid(characterStatusId),
+                    Id = new Guid(resilienceStatId),
+                    Name = "Resilience",
+                    Value = 1,
+                    IsHidden = true
+                },
+                new Stat
+                {
+                    CharacterStatusId = new Guid(characterStatusId),
+                    Id = new Guid(speedStatId),
+                    Name = "Speed",
+                    Value = 1,
+                    IsHidden = true
+                },
+                new Stat
+                {
+                    CharacterStatusId = new Guid(characterStatusId),
+                    Id = new Guid(reflexesStatId),
+                    Name = "Reflexes",
+                    Value = 1,
+                    IsHidden = true
                 }
             );
             #endregion
