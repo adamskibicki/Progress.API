@@ -30,7 +30,7 @@ namespace Progress.Application
             CreateMap<Skill, SkillDto>();
             CreateMap<TierDescription, TierDescriptionDto>();
             CreateMap<SkillVariable, SkillVariableDto>()
-                .ForMember(svd => svd.AffectedStatNames, o => o.Ignore());
+                .ForMember(svd => svd.AffectedStatIds, o => o.MapFrom(sv => sv.AffectedStats.Select(a => a.StatId)));
         }
     }
 }

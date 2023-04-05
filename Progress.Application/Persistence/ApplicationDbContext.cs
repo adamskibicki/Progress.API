@@ -51,6 +51,7 @@ namespace Progress.Application.Persistence
 
 
             var guidGenerator = new SeededGuidGenerator(1501381288);
+            var skillVariableGuidGenerator = new SeededGuidGenerator(1501381288);
 
             string userCharacterId = "0da44e54-90ea-4ad0-a409-ea0cb1d38c4a";
 
@@ -796,7 +797,8 @@ namespace Progress.Application.Persistence
                         new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[2].Id },
                     }));
 
-            modelBuilder.Entity<SkillVariable>().HasData(
+            var skillVariables = new SkillVariable[]
+            {
                 new SkillVariable()
                 {
                     Id = guidGenerator.GetNext(),
@@ -806,7 +808,6 @@ namespace Progress.Application.Persistence
                     Unit = "%",
                     CategoryCalculationType = CategoryCalculationType.Additive,
                     VariableCalculationType = VariableCalculationType.Additive,
-                    //AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength" },
 
                 },
                 new SkillVariable()
@@ -819,8 +820,41 @@ namespace Progress.Application.Persistence
                     BaseVariableName = "stats_increase",
                     CategoryCalculationType = CategoryCalculationType.Additive,
                     VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
-                    //AffectedStatNames = new string[] { "Wisdom" }
-                });
+                }
+            };
+
+            modelBuilder.Entity<SkillVariable>().HasData(skillVariables);
+
+            modelBuilder.Entity<SkillVariableStat>().HasData(new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(resilienceStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(speedStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(intelligenceStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(strengthStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[1].Id,
+                StatId = new Guid(wisdomStatId)
+            });
 
 
 
@@ -1167,7 +1201,8 @@ namespace Progress.Application.Persistence
                         new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[1].Id },
                     }));
 
-            modelBuilder.Entity<SkillVariable>().HasData(
+            skillVariables = new SkillVariable[]
+            {
                 new SkillVariable()
                 {
                     Id = guidGenerator.GetNext(),
@@ -1177,8 +1212,41 @@ namespace Progress.Application.Persistence
                     Unit = "%",
                     CategoryCalculationType = CategoryCalculationType.Additive,
                     VariableCalculationType = VariableCalculationType.Additive,
-                    //AffectedStatNames = new string[] { "Resilience", "Speed", "Intelligence", "Strength", "Dexterity" }
-                });
+                }
+            };
+
+            modelBuilder.Entity<SkillVariable>().HasData(skillVariables);
+
+            modelBuilder.Entity<SkillVariableStat>().HasData(new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(resilienceStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(speedStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(intelligenceStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(strengthStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(dexterityStatId)
+            });
 
 
 
@@ -1339,41 +1407,67 @@ namespace Progress.Application.Persistence
                         new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[7].Id },
                     }));
 
-            modelBuilder.Entity<SkillVariable>().HasData(
-                    new SkillVariable()
-                    {
-                        Id = guidGenerator.GetNext(),
-                        SkillId = skills[7].Id,
-                        Name = "stats_increase",
-                        BaseValue = 75,
-                        Unit = "%",
-                        CategoryCalculationType = CategoryCalculationType.Additive,
-                        VariableCalculationType = VariableCalculationType.Additive,
-                        //AffectedStatNames = new string[] { "Reflexes", "Speed" }
-                    },
-                    new SkillVariable()
-                    {
-                        Id = guidGenerator.GetNext(),
-                        SkillId = skills[7].Id,
-                        Name = "vitality_increase",
-                        BaseValue = 25,
-                        Unit = "%",
-                        BaseVariableName = "stats_increase",
-                        CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
-                        VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
-                        //AffectedStatNames = new string[] { "Vitality" }
-                    },
-                    new SkillVariable()
-                    {
-                        Id = guidGenerator.GetNext(),
-                        SkillId = skills[7].Id,
-                        Name = "endurance_increase",
-                        BaseValue = 625,
-                        Unit = "%",
-                        CategoryCalculationType = CategoryCalculationType.Additive,
-                        VariableCalculationType = VariableCalculationType.None,
-                        //AffectedStatNames = new string[] { "Endurance" }
-                    });
+            skillVariables = new SkillVariable[]
+            {
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[7].Id,
+                    Name = "stats_increase",
+                    BaseValue = 75,
+                    Unit = "%",
+                    CategoryCalculationType = CategoryCalculationType.Additive,
+                    VariableCalculationType = VariableCalculationType.Additive,
+                },
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[7].Id,
+                    Name = "vitality_increase",
+                    BaseValue = 25,
+                    Unit = "%",
+                    BaseVariableName = "stats_increase",
+                    CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
+                    VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
+                },
+                new SkillVariable()
+                {
+                    Id = guidGenerator.GetNext(),
+                    SkillId = skills[7].Id,
+                    Name = "endurance_increase",
+                    BaseValue = 625,
+                    Unit = "%",
+                    CategoryCalculationType = CategoryCalculationType.Additive,
+                    VariableCalculationType = VariableCalculationType.None,
+                }
+            };
+
+            modelBuilder.Entity<SkillVariable>().HasData(skillVariables);
+
+            modelBuilder.Entity<SkillVariableStat>().HasData(new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(reflexesStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[0].Id,
+                StatId = new Guid(speedStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[1].Id,
+                StatId = new Guid(vitalityStatId)
+            },
+            new SkillVariableStat
+            {
+                Id = skillVariableGuidGenerator.GetNext(),
+                SkillVariableId = skillVariables[2].Id,
+                StatId = new Guid(enduranceStatId)
+            });
 
 
 
@@ -1605,13 +1699,13 @@ namespace Progress.Application.Persistence
                         new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[3].Id },
                     }));
 
-            modelBuilder.Entity<SkillVariable>().HasData(
+            skillVariables = new SkillVariable[]
+            {
                 new SkillVariable()
                 {
                     Id = guidGenerator.GetNext(),
                     SkillId = skills[3].Id,
                     BaseValue = 75,
-                    //AffectedStatNames = new string[] { "Resilience" },
                     CategoryCalculationType = CategoryCalculationType.Additive,
                     VariableCalculationType = VariableCalculationType.Additive,
                     Name = "resilience_increase",
@@ -1622,11 +1716,27 @@ namespace Progress.Application.Persistence
                     Id = guidGenerator.GetNext(),
                     SkillId = skills[3].Id,
                     BaseValue = 35,
-                    //AffectedStatNames = new string[] { "Vitality" },
                     CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
                     VariableCalculationType = VariableCalculationType.Additive,
                     Name = "vitality_increase",
                     Unit = "%",
+                }
+            };
+
+            modelBuilder.Entity<SkillVariable>().HasData(skillVariables);
+
+            modelBuilder.Entity<SkillVariableStat>().HasData(
+                new SkillVariableStat
+                {
+                    Id = skillVariableGuidGenerator.GetNext(),
+                    SkillVariableId = skillVariables[0].Id,
+                    StatId = new Guid(resilienceStatId)
+                },
+                new SkillVariableStat
+                {
+                    Id = skillVariableGuidGenerator.GetNext(),
+                    SkillVariableId = skillVariables[1].Id,
+                    StatId = new Guid(vitalityStatId)
                 });
 
 

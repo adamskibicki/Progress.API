@@ -44,6 +44,7 @@ namespace Progress.Application.Usecases.Status
                 .Include(cs => cs.CharacterClasses)
                 .ThenInclude(cc => cc.Skills)
                 .ThenInclude(s => s.Variables)
+                .ThenInclude(v => v.AffectedStats)
                 .Single(cs => cs.Id == request.StatusId);
 
             var classes = mapper.ProjectTo<ClassDto>(dbStatus.CharacterClasses.AsQueryable()).ToArray();
