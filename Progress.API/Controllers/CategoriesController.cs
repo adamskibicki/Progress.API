@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Progress.Application.Usecases.Categories;
-using Progress.Application.Usecases.Status;
+using Progress.Application.Usecases.Status.Get;
 
 namespace Progress.API.Controllers
 {

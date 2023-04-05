@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Converters;
 using Progress.Application.Persistence.Entities;
 
-namespace Progress.Application.Usecases.Status
+namespace Progress.Application.Usecases.Status.Get
 {
     public class StatusDto
     {

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Categories;
-using Progress.Application.Usecases.Status;
+using Progress.Application.Usecases.Status.Get;
 using Progress.Application.Usecases.UserCharacters;
 
 namespace Progress.Application

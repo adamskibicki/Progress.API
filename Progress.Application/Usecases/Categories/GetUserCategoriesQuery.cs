@@ -3,7 +3,7 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence;
-using Progress.Application.Usecases.Status;
+using Progress.Application.Usecases.Status.Get;
 
 namespace Progress.Application.Usecases.Categories
 {

@@ -2,14 +2,13 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence;
-using Progress.Application.Usecases.Status;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Progress.Application.Usecases.Status
+namespace Progress.Application.Usecases.Status.Get
 {
     public class GetStatusQuery : IRequest<StatusDto>
     {

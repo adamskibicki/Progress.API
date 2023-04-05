@@ -1,5 +1,5 @@
 ﻿using Progress.Application.Persistence.Common;
-using Progress.Application.Usecases.Status;
+using Progress.Application.Usecases.Status.Get;
 using System;
 using System.Collections.Generic;
 using System.Linq;

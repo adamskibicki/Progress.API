@@ -4,7 +4,7 @@ using MediatR;
 using Progress.Application.Common;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
-using Progress.Application.Usecases.Status;
+using Progress.Application.Usecases.Status.Get;
 
 namespace Progress.Application.Usecases.Categories
 {

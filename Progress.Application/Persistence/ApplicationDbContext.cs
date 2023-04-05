@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence.Entities;
-using Progress.Application.Usecases.Status;
+using Progress.Application.Usecases.Status.Get;
 using System;
 using System.Reflection.Emit;
 
