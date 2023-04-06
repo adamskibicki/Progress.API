@@ -43,6 +43,8 @@ namespace Progress.API
 
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(x => x.FullName);
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Description = @"JWT Authorization header using the Bearer scheme. \\r\\n\\r\\nEnter 'Bearer' [space] and then your token in the text input below.\\r\\n\\r\\nExample: 'Bearer 12345abcdef'",
