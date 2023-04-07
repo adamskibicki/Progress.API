@@ -26,9 +26,9 @@ namespace Progress.Application.Usecases.Status.Get
             this.mapper = mapper;
         }
 
-        public Task<StatusDto> Handle(GetStatusQuery request, CancellationToken cancellationToken)
+        public async Task<StatusDto> Handle(GetStatusQuery request, CancellationToken cancellationToken)
         {
-            var dbStatus = dbContext.CharacterStatuses
+            var dbStatus = await dbContext.CharacterStatuses
                 .Include(cs => cs.Resources)
                 .Include(cs => cs.Stats)
                 .Include(cs => cs.CharacterClasses)
@@ -44,7 +44,8 @@ namespace Progress.Application.Usecases.Status.Get
                 .ThenInclude(cc => cc.Skills)
                 .ThenInclude(s => s.Variables)
                 .ThenInclude(v => v.AffectedStats)
-                .Single(cs => cs.Id == request.StatusId);
+                .AsSplitQuery()
+                .SingleAsync(cs => cs.Id == request.StatusId, cancellationToken: cancellationToken);
 
             var classes = mapper.ProjectTo<ClassDto>(dbStatus.CharacterClasses.AsQueryable()).ToArray();
 
@@ -65,7 +66,7 @@ namespace Progress.Application.Usecases.Status.Get
                 Classes = classes
             };
 
-            return Task.FromResult(result);
+            return result;
         }
     }
 }
