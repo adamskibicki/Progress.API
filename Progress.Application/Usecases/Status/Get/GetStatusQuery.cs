@@ -47,26 +47,7 @@ namespace Progress.Application.Usecases.Status.Get
                 .AsSplitQuery()
                 .SingleAsync(cs => cs.Id == request.StatusId, cancellationToken: cancellationToken);
 
-            var classes = mapper.ProjectTo<ClassDto>(dbStatus.CharacterClasses.AsQueryable()).ToArray();
-
-            var result = new StatusDto()
-            {
-                Id = request.StatusId,
-                GeneralInformation = new GeneralInformationDto()
-                {
-                    BasicInfo = mapper.Map<BasicInformationDto>(dbStatus.BasicInformation),
-                    Resources = mapper.ProjectTo<ResourceDto>(dbStatus.Resources.AsQueryable()).ToArray(),
-                    Skillpoints = mapper.Map<UnspentSkillpointsDto>(dbStatus.UnspentSkillpoints),
-                    Stats = new StatsDto()
-                    {
-                        UnspentStatpoints = dbStatus.UnspentStatpoints,
-                        Stats = mapper.ProjectTo<StatDto>(dbStatus.Stats.AsQueryable()).ToArray()
-                    }
-                },
-                Classes = classes
-            };
-
-            return result;
+            return mapper.Map<StatusDto>(dbStatus);
         }
     }
 }

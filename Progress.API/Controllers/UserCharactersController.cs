@@ -18,10 +18,10 @@ namespace Progress.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserCharacterDto>>> GetAsync([FromQuery] UserCharactersQuery query) => Ok(await mediator.Send(query));
+        public async Task<ActionResult<IEnumerable<UserCharacterResponseDto>>> GetAsync([FromQuery] UserCharactersQuery query) => Ok(await mediator.Send(query));
 
         [HttpPost]
-        public async Task<ActionResult<UserCharacterDto>> PostAsync([FromBody] AddUserCharacterCommand query) => Ok(await mediator.Send(query));
+        public async Task<ActionResult<UserCharacterResponseDto>> PostAsync([FromBody] AddUserCharacterCommand query) => Ok(await mediator.Send(query));
 
         [HttpDelete]
         public async Task<ActionResult> DeleteAsync([FromQuery] DeleteUserCharacterCommand query) => Ok(await mediator.Send(query));

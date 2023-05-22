@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Categories;
+using Progress.Application.Usecases.Status.Add;
 using Progress.Application.Usecases.Status.Get;
 using Progress.Application.Usecases.UserCharacters;
 
@@ -21,16 +22,27 @@ namespace Progress.Application
             CreateMap<CharacterClass, ClassDto>()
                 .ForMember(c => c.Modifiers, o => o.MapFrom(c => c.ClassModifiers));
             CreateMap<ClassModifier, ClassModifierDto>();
-            CreateMap<CharacterStatus, UserCharacterDto>()
-                .ForMember(ucd => ucd.LastEdited, o => o.MapFrom(cs => cs.CreatedAt))
-                .ForMember(ucd => ucd.Name, o => o.MapFrom(cs => cs.BasicInformation.Name))
-                .ForMember(ucd => ucd.Title, o => o.MapFrom(cs => cs.BasicInformation.Title))
-                .ForMember(ucd => ucd.StatusId, o => o.MapFrom(cs => cs.Id))
-                .ForMember(ucd => ucd.Id, o => o.MapFrom(cs => cs.UserCharacterId));
+            CreateMap<UserCharacter, UserCharacterResponseDto>();
+            CreateMap<CharacterStatus, CharacterStatusSimplifiedResponseDto>()
+                .ForMember(dto => dto.Name, o => o.MapFrom(cs => cs.BasicInformation.Name))
+                .ForMember(dto => dto.Title, o => o.MapFrom(cs => cs.BasicInformation.Title));
+
             CreateMap<Skill, SkillDto>();
             CreateMap<TierDescription, TierDescriptionDto>();
             CreateMap<SkillVariable, SkillVariableDto>()
                 .ForMember(svd => svd.AffectedStatIds, o => o.MapFrom(sv => sv.AffectedStats.Select(a => a.StatId)));
+            CreateMap<CharacterStatus, StatusDto>()
+                .ForPath(sd => sd.GeneralInformation.BasicInfo, o => o.MapFrom(cs => cs.BasicInformation))
+                .ForPath(sd => sd.GeneralInformation.Resources, o => o.MapFrom(cs => cs.Resources))
+                .ForPath(sd => sd.GeneralInformation.Skillpoints, o => o.MapFrom(cs => cs.UnspentSkillpoints))
+                .ForPath(sd => sd.GeneralInformation.Stats.UnspentStatpoints, o => o.MapFrom(cs => cs.UnspentStatpoints))
+                .ForPath(sd => sd.GeneralInformation.Stats.Stats, o => o.MapFrom(cs => cs.Stats))
+                .ForMember(sd => sd.Classes, o => o.MapFrom(cs => cs.CharacterClasses))
+                .ForMember(sd => sd.GeneralSkills, o => o.Ignore());
+
+            CreateMap<CharacterStatusRequestDto, CharacterStatus>()
+                .ForMember(cs => cs.BasicInformation, o => o.MapFrom(csrd => csrd.GeneralInformation.BasicInfo));
+            CreateMap<BasicInfoRequestDto, BasicInformation>();
         }
     }
 }

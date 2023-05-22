@@ -333,7 +333,7 @@ namespace Progress.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
 
                     b.HasData(
                         new
@@ -447,7 +447,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("CharacterStatusId");
 
-                    b.ToTable("CharacterClasses");
+                    b.ToTable("CharacterClasses", (string)null);
 
                     b.HasData(
                         new
@@ -492,7 +492,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("UserCharacterId");
 
-                    b.ToTable("CharacterStatuses");
+                    b.ToTable("CharacterStatuses", (string)null);
 
                     b.HasData(
                         new
@@ -536,7 +536,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.ToTable("ClassModifiers");
+                    b.ToTable("ClassModifiers", (string)null);
 
                     b.HasData(
                         new
@@ -845,7 +845,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("CharacterStatusId");
 
-                    b.ToTable("Resources");
+                    b.ToTable("Resources", (string)null);
 
                     b.HasData(
                         new
@@ -910,7 +910,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("CharacterClassId");
 
-                    b.ToTable("Skills");
+                    b.ToTable("Skills", (string)null);
 
                     b.HasData(
                         new
@@ -1206,7 +1206,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("SkillVariables");
+                    b.ToTable("SkillVariables", (string)null);
 
                     b.HasData(
                         new
@@ -1308,7 +1308,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("SkillVariableId");
 
-                    b.ToTable("SkillVariableStats");
+                    b.ToTable("SkillVariableStats", (string)null);
 
                     b.HasData(
                         new
@@ -1431,7 +1431,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("CharacterStatusId");
 
-                    b.ToTable("Stats");
+                    b.ToTable("Stats", (string)null);
 
                     b.HasData(
                         new
@@ -1527,7 +1527,7 @@ namespace Progress.Application.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("TierDescriptions");
+                    b.ToTable("TierDescriptions", (string)null);
 
                     b.HasData(
                         new
@@ -2107,7 +2107,7 @@ namespace Progress.Application.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserCharacters");
+                    b.ToTable("UserCharacters", (string)null);
 
                     b.HasData(
                         new
@@ -2150,7 +2150,7 @@ namespace Progress.Application.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Progress.Application.Persistence.Entities.BasicInformation", "BasicInformation", b1 =>
+                    b.OwnsOne("Progress.Application.Persistence.Entities.CharacterStatus.BasicInformation#Progress.Application.Persistence.Entities.BasicInformation", "BasicInformation", b1 =>
                         {
                             b1.Property<Guid>("CharacterStatusId")
                                 .HasColumnType("uniqueidentifier");
@@ -2164,7 +2164,7 @@ namespace Progress.Application.Migrations
 
                             b1.HasKey("CharacterStatusId");
 
-                            b1.ToTable("CharacterStatuses");
+                            b1.ToTable("CharacterStatuses", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CharacterStatusId");
@@ -2178,7 +2178,7 @@ namespace Progress.Application.Migrations
                                 });
                         });
 
-                    b.OwnsOne("Progress.Application.Persistence.Entities.UnspentSkillpoints", "UnspentSkillpoints", b1 =>
+                    b.OwnsOne("Progress.Application.Persistence.Entities.CharacterStatus.UnspentSkillpoints#Progress.Application.Persistence.Entities.UnspentSkillpoints", "UnspentSkillpoints", b1 =>
                         {
                             b1.Property<Guid>("CharacterStatusId")
                                 .HasColumnType("uniqueidentifier");
@@ -2197,7 +2197,7 @@ namespace Progress.Application.Migrations
 
                             b1.HasKey("CharacterStatusId");
 
-                            b1.ToTable("CharacterStatuses");
+                            b1.ToTable("CharacterStatuses", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CharacterStatusId");

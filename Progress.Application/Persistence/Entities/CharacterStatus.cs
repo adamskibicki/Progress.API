@@ -1,4 +1,5 @@
 ﻿using Progress.Application.Persistence.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace Progress.Application.Persistence.Entities
 {

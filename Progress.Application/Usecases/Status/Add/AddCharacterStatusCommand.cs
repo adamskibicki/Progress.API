@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Status.Get;
@@ -13,22 +14,22 @@ namespace Progress.Application.Usecases.Status.Add
 {
     public class AddCharacterStatusCommand : IRequest<StatusDto>
     {
-        public Guid UserCharacterId { get; set; }
+        public Guid CharacterStatusId { get; set; }
 
-        public CharacterStatusDto CharacterStatus { get; set; }
+        public CharacterStatusRequestDto CharacterStatus { get; set; }
     }
 
-    public class CharacterStatusDto
+    public class CharacterStatusRequestDto
     {
-        public GeneralInformationDto GeneralInformation { get; set; }
+        public GeneralInformationRequestDto GeneralInformation { get; set; }
     }
 
-    public class GeneralInformationDto
+    public class GeneralInformationRequestDto
     {
-        public BasicInfoDto BasicInfo { get; set; }
+        public BasicInfoRequestDto BasicInfo { get; set; }
     }
 
-    public class BasicInfoDto
+    public class BasicInfoRequestDto
     {
         public string Name { get; set; }
         public string Title { get; set; }
@@ -47,14 +48,18 @@ namespace Progress.Application.Usecases.Status.Add
 
         public async Task<StatusDto> Handle(AddCharacterStatusCommand request, CancellationToken cancellationToken)
         {
-            var userCharacter = dbContext.UserCharacters.First(uc => uc.Id == request.UserCharacterId);
+            var userCharacter = dbContext.CharacterStatuses
+                .Include(cs => cs.UserCharacter)
+                .First(cs => cs.Id == request.CharacterStatusId)
+                .UserCharacter;
 
             var newCharacterStatus = mapper.Map<CharacterStatus>(request.CharacterStatus);
-
-            await dbContext.CharacterStatuses.AddAsync(newCharacterStatus, cancellationToken);
+            newCharacterStatus.UserCharacter = userCharacter;
+            newCharacterStatus.CreatedAt = DateTimeOffset.UtcNow;
 
             userCharacter.CharacterStatuses.Add(newCharacterStatus);
 
+            await dbContext.CharacterStatuses.AddAsync(newCharacterStatus, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
 
             return mapper.Map<StatusDto>(newCharacterStatus);
