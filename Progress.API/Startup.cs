@@ -18,7 +18,6 @@ namespace Progress.API
 
         public void RegisterServices(IServiceCollection services)
         {
-            //TODO: change to passing specific class instance configurations below
             services.AddPersistenceServices(Configuration);
             services.AddSecurityServices(Configuration);
             services.AddApplicationServices();

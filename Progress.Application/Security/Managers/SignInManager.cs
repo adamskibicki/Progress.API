@@ -7,7 +7,6 @@ namespace Progress.Application.Security.Managers
     {
         public Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
         {
-            //TODO: add db implementation later
             if (password == "12345")
             {
                 return Task.FromResult(SignInResult.Success);
