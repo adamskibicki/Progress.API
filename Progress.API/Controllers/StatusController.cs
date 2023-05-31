@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Progress.Application.Usecases.Status.Add;
+using Progress.Application.Usecases.Status.Delete;
 using Progress.Application.Usecases.Status.Get;
 
 namespace Progress.API.Controllers
@@ -21,5 +22,8 @@ namespace Progress.API.Controllers
 
         [HttpPost]
         public async Task<ActionResult<StatusDto>> PostAsync([FromBody] AddCharacterStatusCommand command) => Ok(await mediator.Send(command));
+
+        [HttpDelete]
+        public async Task<ActionResult<StatusDto>> DeleteAsync([FromQuery] DeleteCharacterStatusCommand command) => Ok(await mediator.Send(command));
     }
 }
