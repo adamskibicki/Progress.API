@@ -26,6 +26,6 @@ namespace Progress.API.Controllers
         public Task<IActionResult> PostAsync([FromBody] AddUserCharacterCommand query) => mediator.Send(query).ToActionResult();
 
         [HttpDelete]
-        public async Task<ActionResult> DeleteAsync([FromQuery] DeleteUserCharacterCommand query) => Ok(await mediator.Send(query));
+        public Task<IActionResult> DeleteAsync([FromQuery] DeleteUserCharacterCommand command) => mediator.Send(command).ToActionResult();
     }
 }
