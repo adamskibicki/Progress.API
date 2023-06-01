@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Progress.API.Common;
 using Progress.Application.Usecases.UserCharacters;
 using Progress.Application.Usecases.UserCharacters.Add;
 using Progress.Application.Usecases.UserCharacters.Delete;
@@ -22,7 +21,7 @@ namespace Progress.API.Controllers
         public async Task<ActionResult<IEnumerable<UserCharacterResponseDto>>> GetAsync([FromQuery] UserCharactersQuery query) => Ok(await mediator.Send(query));
 
         [HttpPost]
-        public Task<IActionResult> PostAsync([FromBody] AddUserCharacterCommand query) => mediator.Send(query).ToActionResult();
+        public async Task<ActionResult<UserCharacterResponseDto>> PostAsync([FromBody] AddUserCharacterCommand query) => Ok(await mediator.Send(query));
 
         [HttpDelete]
         public async Task<ActionResult> DeleteAsync([FromQuery] DeleteUserCharacterCommand query) => Ok(await mediator.Send(query));

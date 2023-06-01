@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using LanguageExt.Common;
 using MediatR;
-using Progress.Application.Common;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using System;
@@ -12,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace Progress.Application.Usecases.UserCharacters.Add
 {
-    public class AddUserCharacterCommand : IRequest<Result<UserCharacterResponseDto>>
+    public class AddUserCharacterCommand : IRequest<UserCharacterResponseDto>
     {
         public string Name { get; set; }
         public string Title { get; set; }
     }
 
-    public class AddUserCharacterCommandHandler : IRequestHandlerWithResult<AddUserCharacterCommand, UserCharacterResponseDto>
+    public class AddUserCharacterCommandHandler : IRequestHandler<AddUserCharacterCommand, UserCharacterResponseDto>
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
@@ -29,7 +27,7 @@ namespace Progress.Application.Usecases.UserCharacters.Add
             this.mapper = mapper;
         }
 
-        public async Task<Result<UserCharacterResponseDto>> Handle(AddUserCharacterCommand request, CancellationToken cancellationToken)
+        public async Task<UserCharacterResponseDto> Handle(AddUserCharacterCommand request, CancellationToken cancellationToken)
         {
             var characterStatus = new CharacterStatus
             {
@@ -50,7 +48,7 @@ namespace Progress.Application.Usecases.UserCharacters.Add
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return mapper.Map<UserCharacterResponseDto>(userCharacter);
+            return mapper.Map<UserCharacterResponseDto>(characterStatus);
         }
     }
 }
