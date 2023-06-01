@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using MediatR;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
@@ -14,6 +15,15 @@ namespace Progress.Application.Usecases.UserCharacters.Add
     {
         public string Name { get; set; }
         public string Title { get; set; }
+    }
+
+    public class AddUserCharacterCommandValidator : AbstractValidator<AddUserCharacterCommand>
+    {
+        public AddUserCharacterCommandValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.Title).NotEmpty();
+        }
     }
 
     public class AddUserCharacterCommandHandler : IRequestHandler<AddUserCharacterCommand, UserCharacterResponseDto>
@@ -34,7 +44,7 @@ namespace Progress.Application.Usecases.UserCharacters.Add
                 BasicInformation = new BasicInformation
                 {
                     Name = request.Name,
-                    Title= request.Title,
+                    Title = request.Title,
                 },
                 CreatedAt = DateTimeOffset.UtcNow
             };
@@ -48,7 +58,7 @@ namespace Progress.Application.Usecases.UserCharacters.Add
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            return mapper.Map<UserCharacterResponseDto>(characterStatus);
+            return mapper.Map<UserCharacterResponseDto>(userCharacter);
         }
     }
 }
