@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using LanguageExt;
 using MediatR;
+using Microsoft.IdentityModel.Tokens;
+using Progress.Application.Common;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using System;
@@ -11,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Progress.Application.Usecases.UserCharacters.Add
 {
-    public class AddUserCharacterCommand : IRequest<UserCharacterResponseDto>
+    public class AddUserCharacterCommand : IRequest<Either<Failure, UserCharacterResponseDto>>
     {
         public string Name { get; set; }
         public string Title { get; set; }
@@ -26,18 +29,18 @@ namespace Progress.Application.Usecases.UserCharacters.Add
         }
     }
 
-    public class AddUserCharacterCommandHandler : IRequestHandler<AddUserCharacterCommand, UserCharacterResponseDto>
+    public class AddUserCharacterCommandHandler : ValidationRequestHandler<AddUserCharacterCommand,UserCharacterResponseDto>
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
 
-        public AddUserCharacterCommandHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public AddUserCharacterCommandHandler(ApplicationDbContext dbContext, IMapper mapper, IEnumerable<IValidator<AddUserCharacterCommand>> validators) : base(validators)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
-        public async Task<UserCharacterResponseDto> Handle(AddUserCharacterCommand request, CancellationToken cancellationToken)
+        protected override async Task<Either<Failure, UserCharacterResponseDto>> WrappedHandle(AddUserCharacterCommand request, CancellationToken cancellationToken)
         {
             var characterStatus = new CharacterStatus
             {

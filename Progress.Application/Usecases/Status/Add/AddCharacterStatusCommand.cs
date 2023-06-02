@@ -1,52 +1,34 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using LanguageExt;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Progress.Application.Common;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Status.Get;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Progress.Application.Usecases.Status.Add
 {
-    public class AddCharacterStatusCommand : IRequest<StatusDto>
+    public class AddCharacterStatusCommand : IRequest<Either<Failure, StatusDto>>
     {
         public Guid CharacterStatusId { get; set; }
 
         public CharacterStatusRequestDto CharacterStatus { get; set; }
     }
 
-    public class CharacterStatusRequestDto
-    {
-        public GeneralInformationRequestDto GeneralInformation { get; set; }
-    }
-
-    public class GeneralInformationRequestDto
-    {
-        public BasicInfoRequestDto BasicInfo { get; set; }
-    }
-
-    public class BasicInfoRequestDto
-    {
-        public string Name { get; set; }
-        public string Title { get; set; }
-    }
-
-    public class AddCharacterStatusCommandHandler : IRequestHandler<AddCharacterStatusCommand, StatusDto>
+    public class AddCharacterStatusCommandHandler : ValidationRequestHandler<AddCharacterStatusCommand, StatusDto>
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
 
-        public AddCharacterStatusCommandHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public AddCharacterStatusCommandHandler(ApplicationDbContext dbContext, IMapper mapper, IEnumerable<IValidator<AddCharacterStatusCommand>> validators) : base(validators)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
-        public async Task<StatusDto> Handle(AddCharacterStatusCommand request, CancellationToken cancellationToken)
+        protected override async Task<Either<Failure, StatusDto>> WrappedHandle(AddCharacterStatusCommand request, CancellationToken cancellationToken)
         {
             var userCharacter = dbContext.CharacterStatuses
                 .Include(cs => cs.UserCharacter)

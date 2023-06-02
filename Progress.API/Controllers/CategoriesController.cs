@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Progress.API.Extensions;
 using Progress.Application.Usecases.Categories;
 using Progress.Application.Usecases.Status.Get;
 
@@ -18,9 +19,9 @@ namespace Progress.API.Controllers
         }
 
         [HttpGet(Name = "GetUserCategories")]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetUserCategoriesAsync([FromQuery] GetUserCategoriesQuery query) => Ok(await mediator.Send(query));
+        public Task<IActionResult> GetUserCategoriesAsync([FromQuery] GetUserCategoriesQuery query) => mediator.Send(query).ToActionResult();
 
         [HttpPost(Name = "AddNewCategory")]
-        public async Task<ActionResult<CategoryDto>> AddNewCategoryAsync([FromBody] AddNewCategoryCommand command) => Ok(await mediator.Send(command));
+        public Task<IActionResult> AddNewCategoryAsync([FromBody] AddNewCategoryCommand command) => mediator.Send(command).ToActionResult();
     }
 }

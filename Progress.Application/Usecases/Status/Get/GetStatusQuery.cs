@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using LanguageExt;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Progress.Application.Common;
 using Progress.Application.Persistence;
 using System;
 using System.Collections.Generic;
@@ -10,23 +13,23 @@ using System.Threading.Tasks;
 
 namespace Progress.Application.Usecases.Status.Get
 {
-    public class GetStatusQuery : IRequest<StatusDto>
+    public class GetStatusQuery : IRequest<Either<Failure, StatusDto>>
     {
         public Guid StatusId { get; set; }
     }
 
-    public class GetStatusQueryHandler : IRequestHandler<GetStatusQuery, StatusDto>
+    public class GetStatusQueryHandler : ValidationRequestHandler<GetStatusQuery, StatusDto>
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
 
-        public GetStatusQueryHandler(ApplicationDbContext dbContext, IMapper mapper)
+        public GetStatusQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IEnumerable<IValidator<GetStatusQuery>> validators) : base(validators)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
 
-        public async Task<StatusDto> Handle(GetStatusQuery request, CancellationToken cancellationToken)
+        protected override async Task<Either<Failure, StatusDto>> WrappedHandle(GetStatusQuery request, CancellationToken cancellationToken)
         {
             var dbStatus = await dbContext.CharacterStatuses
                 .Include(cs => cs.Resources)
