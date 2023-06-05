@@ -41,8 +41,24 @@ namespace Progress.Application
                 .ForMember(sd => sd.GeneralSkills, o => o.Ignore());
 
             CreateMap<CharacterStatusRequestDto, CharacterStatus>()
-                .ForMember(cs => cs.BasicInformation, o => o.MapFrom(csrd => csrd.GeneralInformation.BasicInfo));
+                .ForMember(cs => cs.BasicInformation, o => o.MapFrom(csrd => csrd.GeneralInformation.BasicInfo))
+                .ForMember(cs => cs.CharacterClasses, o => o.MapFrom(csrd => csrd.Classes))
+                .ForMember(cs => cs.Resources, o => o.Ignore())
+                .ForMember(cs => cs.UnspentStatpoints, o => o.Ignore())
+                .ForMember(cs => cs.UnspentSkillpoints, o => o.Ignore())
+                .ForMember(cs => cs.Stats, o => o.Ignore())
+                .ForMember(cs => cs.CreatedAt, o => o.Ignore())
+                .ForMember(cs => cs.UserCharacter, o => o.Ignore())
+                .ForMember(cs => cs.UserCharacterId, o => o.Ignore())
+                .ForMember(cs => cs.Id, o => o.Ignore());
             CreateMap<BasicInfoRequestDto, BasicInformation>();
+            CreateMap<CharacterClassRequestDto, CharacterClass>()
+                .ForMember(cs => cs.Id, o => o.Ignore())
+                .ForMember(cs => cs.ClassModifiers, o => o.Ignore())
+                .ForMember(cs => cs.CharacterStatusId, o => o.Ignore())
+                .ForMember(cs => cs.Skills, o => o.Ignore())
+                .ForMember(cs => cs.CharacterStatus, o => o.Ignore());
+
         }
     }
 }

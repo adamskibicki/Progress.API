@@ -36,6 +36,7 @@ namespace Progress.Application.Usecases.Status.Add
                 .UserCharacter;
 
             var newCharacterStatus = mapper.Map<CharacterStatus>(request.CharacterStatus);
+
             newCharacterStatus.UserCharacter = userCharacter;
             newCharacterStatus.CreatedAt = DateTimeOffset.UtcNow;
 
