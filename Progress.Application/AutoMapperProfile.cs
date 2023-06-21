@@ -21,13 +21,15 @@ namespace Progress.Application
             CreateMap<UnspentSkillpoints, UnspentSkillpointsDto>();
             CreateMap<CharacterClass, ClassDto>()
                 .ForMember(c => c.Modifiers, o => o.MapFrom(c => c.ClassModifiers));
-            CreateMap<ClassModifier, ClassModifierDto>();
+            CreateMap<ClassModifier, ClassModifierResponseDto>()
+                .ForMember(cmd => cmd.CategoryId, o => o.MapFrom(cm => cm.Category.Id));
             CreateMap<UserCharacter, UserCharacterResponseDto>();
             CreateMap<CharacterStatus, CharacterStatusSimplifiedResponseDto>()
                 .ForMember(dto => dto.Name, o => o.MapFrom(cs => cs.BasicInformation.Name))
                 .ForMember(dto => dto.Title, o => o.MapFrom(cs => cs.BasicInformation.Title));
 
-            CreateMap<Skill, SkillDto>();
+            CreateMap<Skill, SkillDto>()
+                .ForMember(sd => sd.CategoryIds, o => o.MapFrom(s => s.Categories.Select(c => c.Id)));
             CreateMap<TierDescription, TierDescriptionDto>();
             CreateMap<SkillVariable, SkillVariableDto>()
                 .ForMember(svd => svd.AffectedStatIds, o => o.MapFrom(sv => sv.AffectedStats.Select(a => a.StatId)));
@@ -54,11 +56,16 @@ namespace Progress.Application
             CreateMap<BasicInfoRequestDto, BasicInformation>();
             CreateMap<CharacterClassRequestDto, CharacterClass>()
                 .ForMember(cs => cs.Id, o => o.Ignore())
-                .ForMember(cs => cs.ClassModifiers, o => o.Ignore())
+                .ForMember(cs => cs.ClassModifiers, o => o.MapFrom(ccrd => ccrd.Modifiers))
                 .ForMember(cs => cs.CharacterStatusId, o => o.Ignore())
                 .ForMember(cs => cs.Skills, o => o.Ignore())
                 .ForMember(cs => cs.CharacterStatus, o => o.Ignore());
-
+            CreateMap<ClassModifierRequestDto, ClassModifier>()
+                .ForMember(cs => cs.Id, o => o.Ignore())
+                .ForMember(cs => cs.Category, o => o.Ignore())
+                .ForMember(cs => cs.AffectedResource, o => o.Ignore())
+                .ForMember(cs => cs.Class, o => o.Ignore())
+                .ForMember(cs => cs.ClassId, o => o.Ignore());
         }
     }
 }

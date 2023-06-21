@@ -17,15 +17,15 @@ namespace Progress.Application.Usecases.Status.Get
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Level { get; set; }
-        public ClassModifierDto[] Modifiers { get; set; }
+        public ClassModifierResponseDto[] Modifiers { get; set; }
         public SkillDto[] Skills { get; set; }
     }
 
-    public class ClassModifierDto
+    public class ClassModifierResponseDto
     {
         public Guid Id { get; set; }
         public string Description { get; set; }
-        public CategoryDto Category { get; set; }
+        public Guid? CategoryId { get; set; }
         public int PercentagePointsOfCategoryIncrease { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public CategoryCalculationType CategoryCalculationType { get; set; }
@@ -48,7 +48,7 @@ namespace Progress.Application.Usecases.Status.Get
         public TierDescriptionDto[] TierDescriptions { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public SkillType Type { get; set; }
-        public CategoryDto[] Categories { get; set; }
+        public Guid[] CategoryIds { get; set; }
         public bool Enhanced { get; set; }
         public SkillVariableDto[] Variables { get; set; }
     }

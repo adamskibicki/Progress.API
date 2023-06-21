@@ -19,7 +19,7 @@ namespace Progress.API.Controllers
         }
 
         [HttpGet]
-        public Task<IActionResult> GetAsync([FromQuery] GetStatusQuery query) => mediator.Send(query).ToActionResult();
+        public Task<IActionResult> GetAsync([FromQuery] GetCharacterStatusQuery query) => mediator.Send(query).ToActionResult();
 
         [HttpPost]
         public Task<IActionResult> PostAsync([FromBody] AddCharacterStatusCommand command) => mediator.Send(command).ToActionResult();
