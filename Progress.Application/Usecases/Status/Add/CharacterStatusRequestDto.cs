@@ -3,7 +3,6 @@
     public class CharacterStatusRequestDto
     {
         public GeneralInformationRequestDto GeneralInformation { get; set; }
-
         public CharacterClassRequestDto[] Classes { get; set; }
     }
 }

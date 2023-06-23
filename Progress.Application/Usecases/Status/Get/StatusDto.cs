@@ -110,7 +110,7 @@ namespace Progress.Application.Usecases.Status.Get
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
-        public Guid BaseStatId { get; set; }
+        public Guid? BaseStatId { get; set; }
         public int ResourcePointsPerBaseStatPoint { get; set; }
     }
 

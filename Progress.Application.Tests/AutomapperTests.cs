@@ -1,4 +1,5 @@
 using AutoMapper;
+using Progress.Application.Tests.Usecases.Common;
 
 namespace Progress.Application.Tests
 {
