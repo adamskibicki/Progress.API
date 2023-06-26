@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
 using FluentValidation;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Tests.Usecases.Common;
 using Progress.Application.Usecases.Status.Add;
 using Progress.Application.Usecases.Status.Get;
+using System;
 using Xunit;
 
 namespace Progress.Application.Tests.Usecases.Status.Add
@@ -156,5 +158,129 @@ namespace Progress.Application.Tests.Usecases.Status.Add
             Assert.Equal(addedStatus.Resources[0].BaseStat.Id, addedStatus.Stats[0].Id);
             Assert.Equal(addedStatus.Resources[1].BaseStat.Id, addedStatus.Stats[1].Id);
         }
+
+        [Fact]
+        public async Task AddsSkillsWithRelatedDataToDb()
+        {
+            // Arrange
+            var command = new AddCharacterStatusCommand
+            {
+                CharacterStatusId = oldCharacterStatusId,
+                CharacterStatus = new CharacterStatusRequestDto()
+                {
+                    GeneralInformation = new GeneralInformationRequestDto()
+                    {
+                        Resources = Array.Empty<ResourceRequestDto>(),
+                        Stats = new StatsRequestDto(Array.Empty<StatRequestDto>(), 1)
+                    },
+                    Classes = new[]
+                    {
+                        new CharacterClassRequestDto()
+                        {
+                            Level = 1,
+                            Modifiers = Array.Empty<ClassModifierRequestDto>(),
+                            Name = "Test",
+                            Skills = new[]
+                            {
+                                new SkillRequestDto()
+                                {
+                                    Name = string.Empty,
+                                    Level = 1,
+                                    Tier = 1,
+                                    Type = SkillType.Active,
+                                    Enhanced = true,
+                                    TierDescriptions = new[]
+                                    {
+                                        new TierDescriptionRequestDto(string.Empty, 1),
+                                        new TierDescriptionRequestDto(string.Empty, 1),
+                                    },
+                                    CategoryIds = Array.Empty<Guid>(),
+                                    Variables = Array.Empty<SkillVariableRequestDto>()
+                                },
+                                new SkillRequestDto()
+                                {
+                                    Name = string.Empty,
+                                    Level = 1,
+                                    Tier = 1,
+                                    Type = SkillType.Active,
+                                    Enhanced = true,
+                                    TierDescriptions = new[]
+                                    {
+                                        new TierDescriptionRequestDto(string.Empty, 1),
+                                        new TierDescriptionRequestDto(string.Empty, 1),
+                                    },
+                                    CategoryIds = Array.Empty<Guid>(),
+                                    Variables = Array.Empty<SkillVariableRequestDto>()
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsRight);
+
+            StatusDto resultDto = (StatusDto)result;
+            var addedStatus = dbContext.CharacterStatuses.SingleOrDefault(cs => cs.Id == resultDto.Id);
+
+            Assert.Equal(2, dbContext.Skills.Count());
+            Assert.Equal(2, addedStatus.CharacterClasses.Single().Skills.Count);
+            Assert.Equal(4, dbContext.TierDescriptions.Count());
+            Assert.Equal(2, addedStatus.CharacterClasses.Single().Skills[0].TierDescriptions.Count);
+            Assert.Equal(2, addedStatus.CharacterClasses.Single().Skills[1].TierDescriptions.Count);
+        }
+
+        [Fact]
+        public async Task AddsClassesToDb()
+        {
+            // Arrange
+            var command = new AddCharacterStatusCommand
+            {
+                CharacterStatusId = oldCharacterStatusId,
+                CharacterStatus = new CharacterStatusRequestDto()
+                {
+                    GeneralInformation = new GeneralInformationRequestDto()
+                    {
+                        Resources = Array.Empty<ResourceRequestDto>(),
+                        Stats = new StatsRequestDto(Array.Empty<StatRequestDto>(), 1)
+                    },
+                    Classes = new[]
+                    {
+                        new CharacterClassRequestDto()
+                        {
+                            Level = 1,
+                            Modifiers = Array.Empty<ClassModifierRequestDto>(),
+                            Name = "Test",
+                            Skills = Array.Empty<SkillRequestDto>()
+                        },
+                        new CharacterClassRequestDto()
+                        {
+                            Level = 1,
+                            Modifiers = Array.Empty<ClassModifierRequestDto>(),
+                            Name = "Test",
+                            Skills = Array.Empty<SkillRequestDto>()
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            Assert.True(result.IsRight);
+
+            StatusDto resultDto = (StatusDto)result;
+            var addedStatus = dbContext.CharacterStatuses.SingleOrDefault(cs => cs.Id == resultDto.Id);
+
+            Assert.Equal(2, dbContext.CharacterClasses.Count());
+            Assert.Equal(2, addedStatus.CharacterClasses.Count);
+        }
+
+        //TODO: add tests for checking adding skill categories and skill variables
     }
 }
