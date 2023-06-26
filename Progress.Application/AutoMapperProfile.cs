@@ -11,6 +11,8 @@ namespace Progress.Application
     {
         public AutoMapperProfile()
         {
+            CreateMap<Guid?, Guid>().ConvertUsing((s, _) => throw new Exception("Cannot convert from nullable Guid to Guid"));
+
             CreateMap<Category, CategoryDto>();
             CreateMap<AddNewCategoryCommand, Category>()
                 .ForMember(c => c.Id, o => o.Ignore())
@@ -45,14 +47,14 @@ namespace Progress.Application
             CreateMap<CharacterStatusRequestDto, CharacterStatus>()
                 .ForMember(cs => cs.BasicInformation, o => o.MapFrom(csrd => csrd.GeneralInformation.BasicInfo))
                 .ForMember(cs => cs.CharacterClasses, o => o.MapFrom(csrd => csrd.Classes))
-                .ForMember(cs => cs.Resources, o => o.Ignore())
-                .ForMember(cs => cs.UnspentStatpoints, o => o.Ignore())
+                .ForMember(cs => cs.UnspentStatpoints, o => o.MapFrom(csrd => csrd.GeneralInformation.Stats.UnspentStatpoints))
                 .ForMember(cs => cs.UnspentSkillpoints, o => o.Ignore())
                 .ForMember(cs => cs.Stats, o => o.Ignore())
                 .ForMember(cs => cs.CreatedAt, o => o.Ignore())
                 .ForMember(cs => cs.UserCharacter, o => o.Ignore())
                 .ForMember(cs => cs.UserCharacterId, o => o.Ignore())
-                .ForMember(cs => cs.Id, o => o.Ignore());
+                .ForMember(cs => cs.Id, o => o.Ignore())
+                .ForMember(cs => cs.Resources, o => o.Ignore());
             CreateMap<BasicInfoRequestDto, BasicInformation>();
             CreateMap<CharacterClassRequestDto, CharacterClass>()
                 .ForMember(cs => cs.Id, o => o.Ignore())
@@ -66,6 +68,16 @@ namespace Progress.Application
                 .ForMember(cs => cs.AffectedResource, o => o.Ignore())
                 .ForMember(cs => cs.Class, o => o.Ignore())
                 .ForMember(cs => cs.ClassId, o => o.Ignore());
+            CreateMap<ResourceRequestDto, Resource>()
+                .ForMember(r => r.Id, o => o.Ignore())
+                .ForMember(r => r.BaseStat, o => o.Ignore())
+                .ForMember(r => r.BaseStatId, o => o.Ignore())
+                .ForMember(r => r.AffectingClassModifiers, o => o.Ignore());
+            CreateMap<StatRequestDto, Stat>()
+                .ForMember(r => r.Id, o => o.Ignore())
+                .ForMember(r => r.AffectingSkillVariables, o => o.Ignore())
+                .ForMember(r => r.CharacterStatus, o => o.Ignore())
+                .ForMember(r => r.CharacterStatusId, o => o.Ignore());
         }
     }
 }

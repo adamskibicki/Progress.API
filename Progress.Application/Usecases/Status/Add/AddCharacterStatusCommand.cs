@@ -36,6 +36,7 @@ namespace Progress.Application.Usecases.Status.Add
             newCharacterStatus.CreatedAt = DateTimeOffset.UtcNow;
 
             HandleUserCharacterRelation(request, newCharacterStatus);
+            HandleResourcesStatsRelations(request, newCharacterStatus);
 
             await dbContext.CharacterStatuses.AddAsync(newCharacterStatus, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
@@ -52,6 +53,34 @@ namespace Progress.Application.Usecases.Status.Add
 
             newCharacterStatus.UserCharacter = userCharacter;
             userCharacter.CharacterStatuses.Add(newCharacterStatus);
+        }
+
+        private void HandleResourcesStatsRelations(AddCharacterStatusCommand request, CharacterStatus newCharacterStatus)
+        {
+            var stats = request.CharacterStatus.GeneralInformation.Stats.Stats.Select(s => new
+            {
+                Entity = mapper.Map<Stat>(s),
+                s.Id
+            }).ToList();
+            var resources = request.CharacterStatus.GeneralInformation.Resources.Select(s => new
+            {
+                Entity = mapper.Map<Resource>(s),
+                s.BaseStatId
+            }).ToList();
+
+            foreach (var resource in resources)
+            {
+                foreach (var stat in stats)
+                {
+                    if (resource.BaseStatId == stat.Id && resource.BaseStatId is not null && stat.Id is not null)
+                    {
+                        resource.Entity.BaseStat = stat.Entity;
+                    }
+                }
+            }
+
+            newCharacterStatus.Stats = stats.Select(s => s.Entity).ToList();
+            newCharacterStatus.Resources = resources.Select(r => r.Entity).ToList();
         }
     }
 }
