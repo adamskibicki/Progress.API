@@ -2,5 +2,12 @@
 
 namespace Progress.Application.Usecases.Status.Add
 {
-    public record ClassModifierRequestDto(string Description, Guid? CategoryId, int PercentagePointsOfCategoryIncrease, CategoryCalculationType CategoryCalculationType, Guid? AffectedResourceId);
+    public record ClassModifierRequestDto
+    (
+        string Description, 
+        Guid? CategoryId, 
+        int PercentagePointsOfCategoryIncrease, 
+        CategoryCalculationType CategoryCalculationType, 
+        Guid? AffectedResourceId
+    );
 }

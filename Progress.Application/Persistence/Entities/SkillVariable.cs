@@ -12,6 +12,8 @@ namespace Progress.Application.Persistence.Entities
         /// How it affects other calculations
         /// </summary>
         public CategoryCalculationType CategoryCalculationType { get; set; }
+
+        //TODO: remove base variable name - use id with relation instead
         public string BaseVariableName { get; set; }
         /// <summary>
         /// How variable is calculated itself
