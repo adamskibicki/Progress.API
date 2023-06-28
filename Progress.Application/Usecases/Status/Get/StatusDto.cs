@@ -68,7 +68,7 @@ namespace Progress.Application.Usecases.Status.Get
         public string Unit { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public CategoryCalculationType CategoryCalculationType { get; set; }
-        public string BaseVariableName { get; set; }
+        public Guid? BaseSkillVariableId { get; set; }
         public Guid[] AffectedStatIds { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public VariableCalculationType VariableCalculationType { get; set; }

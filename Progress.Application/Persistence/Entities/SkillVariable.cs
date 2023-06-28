@@ -13,8 +13,8 @@ namespace Progress.Application.Persistence.Entities
         /// </summary>
         public CategoryCalculationType CategoryCalculationType { get; set; }
 
-        //TODO: remove base variable name - use id with relation instead
-        public string BaseVariableName { get; set; }
+        public Guid? BaseSkillVariableId { get; set; }
+        public SkillVariable BaseSkillVariable { get; set; }
         /// <summary>
         /// How variable is calculated itself
         /// </summary>

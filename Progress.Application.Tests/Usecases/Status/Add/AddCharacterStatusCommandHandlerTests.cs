@@ -315,7 +315,6 @@ namespace Progress.Application.Tests.Usecases.Status.Add
                                     CategoryIds = Array.Empty<Guid>(),
                                     Variables = new[]
                                     {
-
                                         new SkillVariableRequestDto(),
                                         new SkillVariableRequestDto(),
                                     }
@@ -335,11 +334,8 @@ namespace Progress.Application.Tests.Usecases.Status.Add
             StatusDto resultDto = (StatusDto)result;
             var addedStatus = dbContext.CharacterStatuses.SingleOrDefault(cs => cs.Id == resultDto.Id);
 
-            Assert.Equal(2, dbContext.Skills.Count());
-            Assert.Equal(2, addedStatus.CharacterClasses.Single().Skills.Count);
-            Assert.Equal(4, dbContext.TierDescriptions.Count());
-            Assert.Equal(2, addedStatus.CharacterClasses.Single().Skills[0].TierDescriptions.Count);
-            Assert.Equal(2, addedStatus.CharacterClasses.Single().Skills[1].TierDescriptions.Count);
+            Assert.Equal(2, dbContext.Skills.Single().Variables.Count());
+            Assert.Equal(2, addedStatus.CharacterClasses.Single().Skills.Single().Variables.Count);
         }
 
         //TODO: add tests for checking adding skill categories and skill variables

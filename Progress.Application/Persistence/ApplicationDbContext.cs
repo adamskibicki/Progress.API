@@ -797,11 +797,13 @@ namespace Progress.Application.Persistence
                         new { CategoriesId = cosmicMagicCategory.Id, SkillsId = skills[2].Id },
                     }));
 
+            var statsIncreaseSkillVariableId = guidGenerator.GetNext();
+
             var skillVariables = new SkillVariable[]
             {
                 new SkillVariable()
                 {
-                    Id = guidGenerator.GetNext(),
+                    Id = statsIncreaseSkillVariableId,
                     SkillId = skills[2].Id,
                     Name = "stats_increase",
                     BaseValue = 100,
@@ -817,7 +819,7 @@ namespace Progress.Application.Persistence
                     Name = "wisdom_increase",
                     BaseValue = 25,
                     Unit = "%",
-                    BaseVariableName = "stats_increase",
+                    BaseSkillVariableId = statsIncreaseSkillVariableId,
                     CategoryCalculationType = CategoryCalculationType.Additive,
                     VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
                 }
@@ -1407,11 +1409,13 @@ namespace Progress.Application.Persistence
                         new { CategoriesId = fireMagicCategory.Id, SkillsId = skills[7].Id },
                     }));
 
+            statsIncreaseSkillVariableId = guidGenerator.GetNext();
+
             skillVariables = new SkillVariable[]
             {
                 new SkillVariable()
                 {
-                    Id = guidGenerator.GetNext(),
+                    Id = statsIncreaseSkillVariableId,
                     SkillId = skills[7].Id,
                     Name = "stats_increase",
                     BaseValue = 75,
@@ -1426,7 +1430,7 @@ namespace Progress.Application.Persistence
                     Name = "vitality_increase",
                     BaseValue = 25,
                     Unit = "%",
-                    BaseVariableName = "stats_increase",
+                    BaseSkillVariableId = statsIncreaseSkillVariableId,
                     CategoryCalculationType = CategoryCalculationType.MultiplicativeWithBaseAdded,
                     VariableCalculationType = VariableCalculationType.StaticAdditiveOtherVariableBased,
                 },
