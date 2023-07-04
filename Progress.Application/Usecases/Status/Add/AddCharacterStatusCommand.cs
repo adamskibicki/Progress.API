@@ -30,7 +30,6 @@ namespace Progress.Application.Usecases.Status.Add
 
         protected override async Task<Either<Failure, StatusDto>> WrappedHandle(AddCharacterStatusCommand request, CancellationToken cancellationToken)
         {
-
             var newCharacterStatus = mapper.Map<CharacterStatus>(request.CharacterStatus);
 
             newCharacterStatus.CreatedAt = DateTimeOffset.UtcNow;
@@ -72,7 +71,7 @@ namespace Progress.Application.Usecases.Status.Add
             {
                 foreach (var stat in stats)
                 {
-                    if (resource.BaseStatId == stat.Id && resource.BaseStatId is not null && stat.Id is not null)
+                    if (resource.BaseStatId is not null && stat.Id is not null && resource.BaseStatId == stat.Id)
                     {
                         resource.Entity.BaseStat = stat.Entity;
                     }

@@ -3,55 +3,49 @@ using Progress.Application.Persistence.Entities;
 using Progress.Application.Persistence;
 using Progress.Application.Usecases.Status.Delete;
 using Progress.Application.Tests.Usecases.Common;
-using Xunit;
 
 namespace Progress.Application.Tests.Usecases.Status.Delete
 {
-    public class DeleteCharacterStatusCommandHandlerTests : IAsyncLifetime
+    public class DeleteCharacterStatusCommandHandlerTests
     {
-        private ApplicationDbContext dbContext;
-        private DeleteCharacterStatusCommandHandler handler;
-        private CharacterStatus existingStatus;
-        private UserCharacter userCharacter;
+        private readonly ApplicationDbContext dbContext;
+        private readonly DeleteCharacterStatusCommandHandler handler;
 
         public DeleteCharacterStatusCommandHandlerTests()
         {
-            dbContext = Fixtures.CreateApplicationDbContext();
-            handler = new DeleteCharacterStatusCommandHandler(dbContext, new List<IValidator<DeleteCharacterStatusCommand>>());
-        }
-
-        public Task DisposeAsync()
-        {
-            dbContext.Dispose();
-            return Task.CompletedTask;
-        }
-
-        public async Task InitializeAsync()
-        {
-            userCharacter = new UserCharacter { Id = Guid.NewGuid() };
-            existingStatus = new CharacterStatus { Id = Guid.NewGuid() };
-            existingStatus.UserCharacter = userCharacter;
-            dbContext.Add(existingStatus);
-            await dbContext.SaveChangesAsync();
+            dbContext = TestHelpersFactory.CreateApplicationDbContext();
+            handler = new DeleteCharacterStatusCommandHandler(dbContext,
+                new List<IValidator<DeleteCharacterStatusCommand>>());
         }
 
         [Fact]
-        public async Task DeletesCharacterStatus()
+        public async Task Handle_ShouldDeleteCharacterStatus_WhenIdIsProvidedAndExistsOtherCharacterStatusWithinSameUserCharacter()
         {
-            var command = new DeleteCharacterStatusCommand { Id = existingStatus.Id };
-            dbContext.CharacterStatuses.Add(new CharacterStatus { UserCharacter = userCharacter });
-            await dbContext.SaveChangesAsync();
+            // Arrange
+            var existingStatusId = Guid.NewGuid();
+            var userCharacter = await dbContext.CreateUserCharacterWithCharacterStatusThatHaveProvidedId(existingStatusId);
+            await dbContext.AddNewCharacterStatusToUserCharacter(userCharacter, Guid.NewGuid());
 
+            var command = new DeleteCharacterStatusCommand { Id = existingStatusId };
+            
+            // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
+            // Assert
             Assert.True(result.IsRight);
         }
 
         [Fact]
-        public async Task ThrowsErrorWhenDeletingLastStatusForUserCharacter()
+        public async Task Handle_ShouldThrowError_WhenDeletingLastStatusForUserCharacter()
         {
-            var command = new DeleteCharacterStatusCommand { Id = existingStatus.Id };
+            // Arrange
+            var existingStatusId = Guid.NewGuid();
+            await dbContext.CreateUserCharacterWithCharacterStatusThatHaveProvidedId(existingStatusId);
 
+            // Act
+            var command = new DeleteCharacterStatusCommand { Id = existingStatusId };
+
+            // Assert
             await Assert.ThrowsAsync<Exception>(async () => await handler.Handle(command, CancellationToken.None));
         }
     }

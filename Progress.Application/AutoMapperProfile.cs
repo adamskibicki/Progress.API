@@ -81,12 +81,16 @@ namespace Progress.Application
                 .ForMember(s => s.Id, o => o.Ignore())
                 .ForMember(s => s.CharacterClass, o => o.Ignore())
                 .ForMember(s => s.CharacterClassId, o => o.Ignore())
-                .ForMember(s => s.Categories, o => o.Ignore())
-                .ForMember(s => s.Variables, o => o.Ignore());
+                .ForMember(s => s.Categories, o => o.Ignore());
             CreateMap<TierDescriptionRequestDto, TierDescription>()
                 .ForMember(td => td.Id, o => o.Ignore())
                 .ForMember(td => td.Skil, o => o.Ignore())
                 .ForMember(td => td.SkillId, o => o.Ignore());
+            CreateMap<SkillVariableRequestDto, SkillVariable>()
+                .ForMember(svrd => svrd.Id, o => o.Ignore())
+                .ForMember(svrd => svrd.BaseSkillVariable, o => o.Ignore())
+                .ForMember(svrd => svrd.AffectedStats, o => o.Ignore())
+                .ForMember(svrd => svrd.Skill, o => o.Ignore());
         }
     }
 }

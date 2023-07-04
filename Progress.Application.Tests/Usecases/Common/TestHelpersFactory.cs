@@ -4,7 +4,7 @@ using Progress.Application.Persistence;
 
 namespace Progress.Application.Tests.Usecases.Common
 {
-    internal static class Fixtures
+    internal static class TestHelpersFactory
     {
         public static ApplicationDbContext CreateApplicationDbContext()
         {
