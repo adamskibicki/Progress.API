@@ -1,6 +1,8 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence;
+using Progress.Application.Usecases.Status.Add;
 
 namespace Progress.Application.Tests.Usecases.Common
 {
@@ -11,8 +13,8 @@ namespace Progress.Application.Tests.Usecases.Common
             var dbName = typeof(ApplicationDbContext) + "_" + DateTime.Now.ToFileTimeUtc();
 
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                            .UseInMemoryDatabase(databaseName: dbName)
-                            .Options;
+                .UseInMemoryDatabase(databaseName: dbName)
+                .Options;
 
             return new ApplicationDbContext(options);
         }
@@ -22,6 +24,16 @@ namespace Progress.Application.Tests.Usecases.Common
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile<AutoMapperProfile>());
 
             return new Mapper(configuration);
+        }
+
+        public static Fixture CreateFixture()
+        {
+            var fixture = new Fixture();
+
+            fixture.Customize<SkillVariableRequestDto>(x => x
+                .With(sv => sv.BaseSkillVariableId, () => null));
+
+            return fixture;
         }
     }
 }

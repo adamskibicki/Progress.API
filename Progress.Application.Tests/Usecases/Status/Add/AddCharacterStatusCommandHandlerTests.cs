@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Tests.Usecases.Common;
@@ -16,7 +17,7 @@ namespace Progress.Application.Tests.Usecases.Status.Add
 
         public AddCharacterStatusCommandHandlerTests()
         {
-            fixture = new Fixture();
+            fixture = TestHelpersFactory.CreateFixture();
             dbContext = TestHelpersFactory.CreateApplicationDbContext();
             var mapper = TestHelpersFactory.CreateMapper();
             handler = new AddCharacterStatusCommandHandler(dbContext, mapper,
@@ -115,6 +116,7 @@ namespace Progress.Application.Tests.Usecases.Status.Add
                             }
                             , 1)
                     },
+                    Classes = Array.Empty<CharacterClassRequestDto>()
                 }
             };
 
@@ -320,6 +322,133 @@ namespace Progress.Application.Tests.Usecases.Status.Add
             addedStatus.CharacterClasses.Single().Skills.Single().Variables.Count.Should().Be(2);
         }
 
-        //TODO: add tests for checking adding skill categories and skill variables
+        [Fact]
+        public async Task Handle_ShouldAddSkillVariablesWithRelationBasedOnBaseSkillVariableId_WhenCommandIsProvided()
+        {
+            // Arrange
+            var oldCharacterStatusId = Guid.NewGuid();
+            await dbContext.CreateUserCharacterWithCharacterStatusThatHaveProvidedId(oldCharacterStatusId);
+            var skillVariableId = Guid.NewGuid();
+            var command = new AddCharacterStatusCommand
+            {
+                CharacterStatusId = oldCharacterStatusId,
+                CharacterStatus = new CharacterStatusRequestDto()
+                {
+                    GeneralInformation = new GeneralInformationRequestDto()
+                    {
+                        Resources = Array.Empty<ResourceRequestDto>(),
+                        Stats = new StatsRequestDto(Array.Empty<StatRequestDto>(), 1)
+                    },
+                    Classes = new[]
+                    {
+                        new CharacterClassRequestDto()
+                        {
+                            Level = 1,
+                            Modifiers = Array.Empty<ClassModifierRequestDto>(),
+                            Name = "Test",
+                            Skills = new[]
+                            {
+                                new SkillRequestDto()
+                                {
+                                    Name = string.Empty,
+                                    Level = 1,
+                                    Tier = 1,
+                                    Type = SkillType.Active,
+                                    Enhanced = true,
+                                    TierDescriptions = Array.Empty<TierDescriptionRequestDto>(),
+                                    CategoryIds = Array.Empty<Guid>(),
+                                    Variables = new[]
+                                    {
+                                        fixture.Build<SkillVariableRequestDto>()
+                                            .With(x => x.Id, skillVariableId)
+                                            .With(x => x.BaseSkillVariableId, () => null)
+                                            .Create(),
+                                        fixture.Build<SkillVariableRequestDto>()
+                                            .With(x => x.BaseSkillVariableId, () => null)
+                                            .Create(),
+                                        fixture.Build<SkillVariableRequestDto>()
+                                            .With(x => x.BaseSkillVariableId, skillVariableId)
+                                            .Create()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsRight.Should().BeTrue();
+
+            var skillEntity = dbContext.Skills.Single();
+            skillEntity.Variables[2].BaseSkillVariable.Id.Should().Be(skillEntity.Variables[0].Id);
+
+            var resultDto = (StatusDto)result;
+            var addedStatus = dbContext.CharacterStatuses.Single(cs => cs.Id == resultDto.Id);
+            dbContext.Skills.Single().Variables.Count().Should().Be(3);
+            addedStatus.CharacterClasses.Single().Skills.Single().Variables.Count.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldAddCategoriesWithRelations_WhenCommandIsProvided()
+        {
+            // Arrange
+            var oldCharacterStatusId = Guid.NewGuid();
+            await dbContext.CreateUserCharacterWithCharacterStatusThatHaveProvidedId(oldCharacterStatusId);
+            var categoryId0 = Guid.NewGuid();
+            var categoryId1 = Guid.NewGuid();
+            await dbContext.AddNewCategory(categoryId0);
+            await dbContext.AddNewCategory(categoryId1);
+            await dbContext.AddNewCategory(Guid.NewGuid());
+            var command = new AddCharacterStatusCommand
+            {
+                CharacterStatusId = oldCharacterStatusId,
+                CharacterStatus = new CharacterStatusRequestDto()
+                {
+                    GeneralInformation = new GeneralInformationRequestDto()
+                    {
+                        Resources = Array.Empty<ResourceRequestDto>(),
+                        Stats = new StatsRequestDto(Array.Empty<StatRequestDto>(), 1)
+                    },
+                    Classes = new[]
+                    {
+                        new CharacterClassRequestDto()
+                        {
+                            Level = 1,
+                            Modifiers = Array.Empty<ClassModifierRequestDto>(),
+                            Name = "Test",
+                            Skills = new[]
+                            {
+                                new SkillRequestDto()
+                                {
+                                    Name = string.Empty,
+                                    Level = 1,
+                                    Tier = 1,
+                                    Type = SkillType.Active,
+                                    Enhanced = true,
+                                    TierDescriptions = Array.Empty<TierDescriptionRequestDto>(),
+                                    CategoryIds = new[] { categoryId0, categoryId1 },
+                                    Variables = Array.Empty<SkillVariableRequestDto>()
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsRight.Should().BeTrue();
+
+            var skillEntity = dbContext.Skills.Single();
+            skillEntity.Categories[0].Id.Should().Be(categoryId0);            
+            skillEntity.Categories[1].Id.Should().Be(categoryId1);
+            skillEntity.Categories.Count.Should().Be(2);          
+        }
     }
 }

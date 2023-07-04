@@ -51,4 +51,18 @@ internal static class ApplicationDbContextExtensions
 
         return characterStatus;
     }
+    
+    public static async Task<Category> AddNewCategory(this ApplicationDbContext dbContext, Guid categoryId)
+    {
+        var category = Fixture.Build<Category>()
+            .With(cs => cs.Id, categoryId)
+            .Without(cs => cs.Skills)
+            .Create();
+
+        dbContext.Categories.Add(category);
+
+        await dbContext.SaveChangesAsync();
+
+        return category;
+    }
 }
