@@ -46,7 +46,7 @@ namespace Progress.Application
 
             CreateMap<CharacterStatusRequestDto, CharacterStatus>()
                 .ForMember(cs => cs.BasicInformation, o => o.MapFrom(csrd => csrd.GeneralInformation.BasicInfo))
-                .ForMember(cs => cs.CharacterClasses, o => o.MapFrom(csrd => csrd.Classes))
+                .ForMember(cs => cs.CharacterClasses, o => o.Ignore())
                 .ForMember(cs => cs.UnspentStatpoints, o => o.MapFrom(csrd => csrd.GeneralInformation.Stats.UnspentStatpoints))
                 .ForMember(cs => cs.UnspentSkillpoints, o => o.Ignore())
                 .ForMember(cs => cs.Stats, o => o.Ignore())
@@ -74,10 +74,27 @@ namespace Progress.Application
                 .ForMember(r => r.BaseStatId, o => o.Ignore())
                 .ForMember(r => r.AffectingClassModifiers, o => o.Ignore());
             CreateMap<StatRequestDto, Stat>()
-                .ForMember(r => r.Id, o => o.Ignore())
-                .ForMember(r => r.AffectingSkillVariables, o => o.Ignore())
-                .ForMember(r => r.CharacterStatus, o => o.Ignore())
-                .ForMember(r => r.CharacterStatusId, o => o.Ignore());
+                .ForMember(s => s.Id, o => o.Ignore())
+                .ForMember(s => s.AffectingSkillVariables, o => o.Ignore())
+                .ForMember(s => s.CharacterStatus, o => o.Ignore())
+                .ForMember(s => s.CharacterStatusId, o => o.Ignore());
+            CreateMap<SkillRequestDto, Skill>()
+                .ForMember(s => s.Id, o => o.Ignore())
+                .ForMember(s => s.CharacterClass, o => o.Ignore())
+                .ForMember(s => s.CharacterClassId, o => o.Ignore())
+                .ForMember(s => s.Variables, o => o.Ignore())
+                .ForMember(s => s.Categories, o => o.Ignore());
+            CreateMap<TierDescriptionRequestDto, TierDescription>()
+                .ForMember(td => td.Id, o => o.Ignore())
+                .ForMember(td => td.Skil, o => o.Ignore())
+                .ForMember(td => td.SkillId, o => o.Ignore());
+            CreateMap<SkillVariableRequestDto, SkillVariable>()
+                .ForMember(svrd => svrd.Id, o => o.Ignore())
+                .ForMember(svrd => svrd.BaseSkillVariable, o => o.Ignore())
+                .ForMember(svrd => svrd.BaseSkillVariableId, o => o.Ignore())
+                .ForMember(svrd => svrd.AffectedStats, o => o.Ignore())
+                .ForMember(svrd => svrd.Skill, o => o.Ignore())
+                .ForMember(svrd => svrd.SkillId, o => o.Ignore());
         }
     }
 }

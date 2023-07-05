@@ -12,7 +12,9 @@ namespace Progress.Application.Persistence.Entities
         /// How it affects other calculations
         /// </summary>
         public CategoryCalculationType CategoryCalculationType { get; set; }
-        public string BaseVariableName { get; set; }
+
+        public Guid? BaseSkillVariableId { get; set; }
+        public SkillVariable BaseSkillVariable { get; set; }
         /// <summary>
         /// How variable is calculated itself
         /// </summary>
