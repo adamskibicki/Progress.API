@@ -35,14 +35,19 @@ namespace Progress.Application.Usecases.Status.Add
             CancellationToken cancellationToken)
         {
             await CacheUserCategories(cancellationToken);
-            
+
             var newCharacterStatus = mapper.Map<CharacterStatus>(request.CharacterStatus);
 
             newCharacterStatus.CreatedAt = DateTimeOffset.UtcNow;
 
+            var stats = request.CharacterStatus.GeneralInformation.Stats.Stats.Select(s =>
+            (
+                Entity: mapper.Map<Stat>(s),
+                dtoId: s.Id
+            )).ToArray();
             HandleUserCharacterRelation(request, newCharacterStatus);
-            HandleResourcesStatsRelations(request, newCharacterStatus);
-            HandleClasses(request, newCharacterStatus);
+            HandleResourcesStatsRelations(request, newCharacterStatus, stats);
+            HandleClasses(request, newCharacterStatus, stats);
 
             await dbContext.CharacterStatuses.AddAsync(newCharacterStatus, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
@@ -68,24 +73,20 @@ namespace Progress.Application.Usecases.Status.Add
         }
 
         private void HandleResourcesStatsRelations(AddCharacterStatusCommand request,
-            CharacterStatus newCharacterStatus)
+            CharacterStatus newCharacterStatus, (Stat Entity, Guid dtoId)[] stats)
         {
-            var stats = request.CharacterStatus.GeneralInformation.Stats.Stats.Select(s => new
-            {
-                Entity = mapper.Map<Stat>(s),
-                s.Id
-            }).ToList();
             var resources = request.CharacterStatus.GeneralInformation.Resources.Select(s => new
             {
                 Entity = mapper.Map<Resource>(s),
-                s.BaseStatId
+                dtoBaseStatId = s.BaseStatId
             }).ToList();
 
             foreach (var resource in resources)
             {
                 foreach (var stat in stats)
                 {
-                    if (resource.BaseStatId is not null && stat.Id is not null && resource.BaseStatId == stat.Id)
+                    if (resource.dtoBaseStatId is not null &&
+                        resource.dtoBaseStatId == stat.dtoId)
                     {
                         resource.Entity.BaseStat = stat.Entity;
                     }
@@ -97,7 +98,7 @@ namespace Progress.Application.Usecases.Status.Add
         }
 
         private void HandleClasses(AddCharacterStatusCommand request,
-            CharacterStatus newCharacterStatus)
+            CharacterStatus newCharacterStatus, (Stat Entity, Guid dtoId)[] stats)
         {
             var classes = request.CharacterStatus.Classes.Select(x => new
             {
@@ -107,13 +108,14 @@ namespace Progress.Application.Usecases.Status.Add
 
             foreach (var classWithSkillsDtos in classes)
             {
-                HandleSkills(classWithSkillsDtos.entity, classWithSkillsDtos.dto);
+                HandleSkills(classWithSkillsDtos.entity, classWithSkillsDtos.dto, stats);
             }
 
             newCharacterStatus.CharacterClasses = classes.Select(x => x.entity).ToList();
         }
 
-        private void HandleSkills(CharacterClass entity, CharacterClassRequestDto dto)
+        private void HandleSkills(CharacterClass entity, CharacterClassRequestDto dto,
+            (Stat Entity, Guid dtoId)[] stats)
         {
             var skills = dto.Skills.Select(x => new
             {
@@ -123,7 +125,7 @@ namespace Progress.Application.Usecases.Status.Add
 
             foreach (var skill in skills)
             {
-                HandleVariables(skill.entity, skill.dto);
+                HandleVariables(skill.entity, skill.dto, stats);
                 HandleCategories(skill.entity, skill.dto);
             }
 
@@ -141,7 +143,7 @@ namespace Progress.Application.Usecases.Status.Add
             entity.Categories = skillCategories;
         }
 
-        private void HandleVariables(Skill entity, SkillRequestDto dto)
+        private void HandleVariables(Skill entity, SkillRequestDto dto, (Stat Entity, Guid dtoId)[] stats)
         {
             var variables = dto.Variables.Select(x => new
             {
@@ -156,6 +158,16 @@ namespace Progress.Application.Usecases.Status.Add
                     variable.entity.BaseSkillVariable =
                         variables.Single(x => x.dto.Id == variable.dto.BaseSkillVariableId).entity;
                 }
+
+                variable.entity.AffectedStats = stats
+                    .Where(s => variable.dto.AffectedStatIds
+                        .Contains(s.dtoId))
+                    .Select(s => new SkillVariableStat()
+                    {
+                        Stat = s.Entity,
+                        SkillVariable = variable.entity
+                    })
+                    .ToList();
             }
 
             entity.Variables = variables.Select(x => x.entity).ToList();

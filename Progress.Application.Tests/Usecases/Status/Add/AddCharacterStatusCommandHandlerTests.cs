@@ -64,8 +64,8 @@ namespace Progress.Application.Tests.Usecases.Status.Add
                         .With(gi => gi.Stats, fixture.Build<StatsRequestDto>()
                             .With(s => s.Stats, new[]
                             {
-                                new StatRequestDto(null, string.Empty, 5, false),
-                                new StatRequestDto(null, string.Empty, 5, false)
+                                new StatRequestDto(Guid.NewGuid(), string.Empty, 5, false),
+                                new StatRequestDto(Guid.NewGuid(), string.Empty, 5, false)
                             })
                             .Create())
                         .Create())
@@ -446,9 +446,82 @@ namespace Progress.Application.Tests.Usecases.Status.Add
             result.IsRight.Should().BeTrue();
 
             var skillEntity = dbContext.Skills.Single();
-            skillEntity.Categories[0].Id.Should().Be(categoryId0);            
+            skillEntity.Categories[0].Id.Should().Be(categoryId0);
             skillEntity.Categories[1].Id.Should().Be(categoryId1);
-            skillEntity.Categories.Count.Should().Be(2);          
+            skillEntity.Categories.Count.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task Handle_ShouldAddSkillVariablesWithRelationBasedOnAffectedStatIds_WhenCommandIsProvided()
+        {
+            // Arrange
+            var oldCharacterStatusId = Guid.NewGuid();
+            await dbContext.CreateUserCharacterWithCharacterStatusThatHaveProvidedId(oldCharacterStatusId);
+            var skillVariableId = Guid.NewGuid();
+            var affectedStatId0 = Guid.NewGuid();
+            var affectedStatId1 = Guid.NewGuid();
+            var command = new AddCharacterStatusCommand
+            {
+                CharacterStatusId = oldCharacterStatusId,
+                CharacterStatus = new CharacterStatusRequestDto()
+                {
+                    GeneralInformation = new GeneralInformationRequestDto()
+                    {
+                        Resources = Array.Empty<ResourceRequestDto>(),
+                        Stats = new StatsRequestDto(new StatRequestDto[]
+                        {
+                            fixture.Build<StatRequestDto>()
+                                .With(x => x.Id, affectedStatId0)
+                                .Create(),
+                            fixture.Build<StatRequestDto>()
+                                .With(x => x.Id, affectedStatId1)
+                                .Create(),
+                            fixture.Build<StatRequestDto>()
+                                .With(x => x.Id, Guid.NewGuid())
+                                .Create(),
+                        }, 1)
+                    },
+                    Classes = new[]
+                    {
+                        new CharacterClassRequestDto()
+                        {
+                            Level = 1,
+                            Modifiers = Array.Empty<ClassModifierRequestDto>(),
+                            Name = "Test",
+                            Skills = new[]
+                            {
+                                new SkillRequestDto()
+                                {
+                                    Name = string.Empty,
+                                    Level = 1,
+                                    Tier = 1,
+                                    Type = SkillType.Active,
+                                    Enhanced = true,
+                                    TierDescriptions = Array.Empty<TierDescriptionRequestDto>(),
+                                    CategoryIds = Array.Empty<Guid>(),
+                                    Variables = new[]
+                                    {
+                                        fixture.Build<SkillVariableRequestDto>()
+                                            .With(x => x.Id, skillVariableId)
+                                            .With(x => x.BaseSkillVariableId, () => null)
+                                            .With(x => x.AffectedStatIds, new[] { affectedStatId0, affectedStatId1 })
+                                            .Create(),
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.IsRight.Should().BeTrue();
+
+            var skillEntity = dbContext.Skills.Single();
+            skillEntity.Variables[0].AffectedStats.Count.Should().Be(2);
         }
     }
 }
