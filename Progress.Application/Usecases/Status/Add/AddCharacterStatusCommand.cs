@@ -57,7 +57,6 @@ namespace Progress.Application.Usecases.Status.Add
 
         private async Task CacheUserCategories(CancellationToken cancellationToken)
         {
-            //TODO: will need user filtering to only get user categories
             cachedUserCategories = await dbContext.Categories.ToArrayAsync(cancellationToken: cancellationToken);
         }
 
