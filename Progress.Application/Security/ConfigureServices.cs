@@ -6,25 +6,30 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Progress.Application.Security.Models;
 using System.Text;
-using Progress.Application.Persistence;
-using Progress.Application.Persistence.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Progress.Application.Security.Services;
 
 namespace Progress.Application.Security
 {
     public static class ConfigureServices
     {
-        public static void AddSecurityServices(this IServiceCollection services, IConfiguration configuration)
+        public static void AddSecurityServices<TIdentityUser, TIdentityRole, TIdentityDbContext, TKey>(
+            this IServiceCollection services, IConfiguration configuration)
+            where TIdentityUser : IdentityUser<TKey>
+            where TIdentityRole : IdentityRole<TKey>
+            where TIdentityDbContext : IdentityDbContext<TIdentityUser, TIdentityRole, TKey>
+            where TKey : IEquatable<TKey>
         {
             services.Configure<JSONWebTokensSettings>(configuration.GetSection("JSONWebTokensSettings"));
 
             services.AddScoped<ITokenService, TokenService>();
-            
+
             services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(o =>
                 {
                     o.RequireHttpsMetadata = false;
@@ -38,7 +43,8 @@ namespace Progress.Application.Security
                         ClockSkew = TimeSpan.Zero,
                         ValidIssuer = configuration["JSONWebTokensSettings:Issuer"],
                         ValidAudience = configuration["JSONWebTokensSettings:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JSONWebTokensSettings:Key"]))
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JSONWebTokensSettings:Key"]))
                     };
 
                     o.Events = new JwtBearerEvents()
@@ -67,10 +73,9 @@ namespace Progress.Application.Security
                         },
                     };
                 });
-            
-            //TODO: should it be here, or maybe pass specific dbcontext and user from outside - probably best solution
+
             services
-                .AddIdentityCore<User>(options =>
+                .AddIdentityCore<TIdentityUser>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                     options.User.RequireUniqueEmail = true;
@@ -80,7 +85,7 @@ namespace Progress.Application.Security
                     options.Password.RequireUppercase = false;
                     options.Password.RequireLowercase = false;
                 })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<TIdentityDbContext>();
         }
     }
 }

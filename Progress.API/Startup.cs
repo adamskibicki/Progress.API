@@ -3,13 +3,14 @@ using Newtonsoft.Json.Serialization;
 using Progress.API.Middlewares;
 using Progress.Application;
 using Progress.Application.Persistence;
+using Progress.Application.Persistence.Entities;
 using Progress.Application.Security;
 
 namespace Progress.API
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
@@ -19,7 +20,7 @@ namespace Progress.API
         public void RegisterServices(IServiceCollection services)
         {
             services.AddPersistenceServices(Configuration);
-            services.AddSecurityServices(Configuration);
+            services.AddSecurityServices<User, ApplicationRole, ApplicationDbContext, Guid>(Configuration);
             services.AddApplicationServices();
 
             services.AddTransient<ExceptionHandlingMiddleware>();
