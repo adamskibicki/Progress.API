@@ -4,11 +4,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Progress.Application.Security.Contracts;
-using Progress.Application.Security.Managers;
 using Progress.Application.Security.Models;
-using Progress.Application.Security.Services;
 using System.Text;
+using Progress.Application.Persistence;
+using Progress.Application.Persistence.Entities;
+using Progress.Application.Security.Services;
 
 namespace Progress.Application.Security
 {
@@ -18,10 +18,8 @@ namespace Progress.Application.Security
         {
             services.Configure<JSONWebTokensSettings>(configuration.GetSection("JSONWebTokensSettings"));
 
-            services.AddSingleton<IUserManager<User>, UserManager>();
-            services.AddSingleton<ISignInManager<User>, SignInManager>();
-            services.AddTransient<IAuthenticationService, AuthenticationService>();
-
+            services.AddScoped<ITokenService, TokenService>();
+            
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -69,6 +67,20 @@ namespace Progress.Application.Security
                         },
                     };
                 });
+            
+            //TODO: should it be here, or maybe pass specific dbcontext and user from outside - probably best solution
+            services
+                .AddIdentityCore<User>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.User.RequireUniqueEmail = true;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 6;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
         }
     }
 }

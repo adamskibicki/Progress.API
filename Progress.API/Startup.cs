@@ -50,6 +50,7 @@ namespace Progress.API
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
 
