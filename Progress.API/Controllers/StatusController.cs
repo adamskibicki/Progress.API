@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Progress.API.Extensions;
 using Progress.Application.Usecases.Status.Add;
@@ -18,13 +19,19 @@ namespace Progress.API.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize]
         [HttpGet]
-        public Task<IActionResult> GetAsync([FromQuery] GetCharacterStatusQuery query) => mediator.Send(query).ToActionResult();
+        public Task<IActionResult> GetAsync([FromQuery] GetCharacterStatusQuery query) =>
+            mediator.Send(query).ToActionResult();
 
+        [Authorize]
         [HttpPost]
-        public Task<IActionResult> PostAsync([FromBody] AddCharacterStatusCommand command) => mediator.Send(command).ToActionResult();
+        public Task<IActionResult> PostAsync([FromBody] AddCharacterStatusCommand command) =>
+            mediator.Send(command).ToActionResult();
 
+        [Authorize]
         [HttpDelete]
-        public Task<IActionResult> DeleteAsync([FromQuery] DeleteCharacterStatusCommand command) => mediator.Send(command).ToActionResult();
+        public Task<IActionResult> DeleteAsync([FromQuery] DeleteCharacterStatusCommand command) =>
+            mediator.Send(command).ToActionResult();
     }
 }

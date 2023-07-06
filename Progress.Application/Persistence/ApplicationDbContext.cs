@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Status.Get;
-using System;
-using System.Reflection.Emit;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Progress.Application.Persistence
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User, ApplicationRole, Guid>
     {
         public DbSet<Category> Categories { get; set; }
 
@@ -36,6 +35,8 @@ namespace Progress.Application.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.Entity<SkillVariableStat>()
                 .HasKey(svs => new {svs.StatId, svs.SkillVariableId});
             modelBuilder.Entity<SkillVariableStat>()
