@@ -1,3 +1,3 @@
 ﻿namespace Progress.Application.Usecases.Users.Login;
 
-public record LoginUserResponseDto(string UserName, string Email, string Token);
+public record LoginUserResponseDto(Guid Id, string UserName, string Email, string Token);

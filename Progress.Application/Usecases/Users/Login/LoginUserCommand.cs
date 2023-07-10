@@ -4,7 +4,6 @@ using LanguageExt;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Progress.Application.Common;
-using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Security.Services;
 
@@ -27,14 +26,12 @@ public class LoginUserCommandValidator : AbstractValidator<LoginUserCommand>
 public class LoginUserCommandHandler : ValidationRequestHandler<LoginUserCommand, LoginUserResponseDto>
 {
     private readonly UserManager<User> userManager;
-    private readonly ApplicationDbContext dbContext;
     private readonly ITokenService tokenService;
 
     public LoginUserCommandHandler(IEnumerable<IValidator<LoginUserCommand>> validators,
-        UserManager<User> userManager, ApplicationDbContext dbContext, ITokenService tokenService) : base(validators)
+        UserManager<User> userManager, ITokenService tokenService) : base(validators)
     {
         this.userManager = userManager;
-        this.dbContext = dbContext;
         this.tokenService = tokenService;
     }
 
@@ -53,13 +50,8 @@ public class LoginUserCommandHandler : ValidationRequestHandler<LoginUserCommand
             return new Failure(new Exception("Bad credentials"));
         }
         
-        var userInDb = dbContext.Users.FirstOrDefault(u => u.Email == request.Email);
-        if (userInDb is null)
-            return new Failure(new Exception("Unauthorized"));
-        
-        var token = tokenService.CreateToken(userInDb);
-        await dbContext.SaveChangesAsync(cancellationToken);
+        var token = tokenService.CreateToken(managedUser);
 
-        return new LoginUserResponseDto(userInDb.UserName, userInDb.Email, token);
+        return new LoginUserResponseDto(managedUser.Id, managedUser.UserName, managedUser.Email, token);
     }
 }

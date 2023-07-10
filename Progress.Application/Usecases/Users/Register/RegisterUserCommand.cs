@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Progress.Application.Common;
 using Progress.Application.Persistence.Entities;
+using Unit = MediatR.Unit;
 
 namespace Progress.Application.Usecases.Users.Register;
 
@@ -12,7 +13,7 @@ public record RegisterUserCommand(
     string Email,
     string UserName,
     string Password
-) : IRequest<Either<Failure, UserResponseDto>>;
+) : IRequest<Either<Failure, Unit>>;
 
 public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
@@ -24,7 +25,7 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
     }
 }
 
-public class RegisterUserCommandHandler : ValidationRequestHandler<RegisterUserCommand, UserResponseDto>
+public class RegisterUserCommandHandler : ValidationRequestHandler<RegisterUserCommand, Unit>
 {
     private readonly UserManager<User> userManager;
 
@@ -34,7 +35,7 @@ public class RegisterUserCommandHandler : ValidationRequestHandler<RegisterUserC
         this.userManager = userManager;
     }
 
-    protected override async Task<Either<Failure, UserResponseDto>> WrappedHandle(RegisterUserCommand request,
+    protected override async Task<Either<Failure, Unit>> WrappedHandle(RegisterUserCommand request,
         CancellationToken cancellationToken)
     {
         var result = await userManager.CreateAsync(
@@ -44,7 +45,7 @@ public class RegisterUserCommandHandler : ValidationRequestHandler<RegisterUserC
 
         if (result.Succeeded)
         {
-            return new UserResponseDto(request.UserName, request.Email);
+            return new Unit();
         }
 
         return new Failure(new Exception(BuildErrorMessage(result)));
