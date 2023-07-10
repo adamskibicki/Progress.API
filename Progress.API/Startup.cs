@@ -22,6 +22,8 @@ namespace Progress.API
             services.AddPersistenceServices(Configuration);
             services.AddSecurityServices<User, ApplicationRole, ApplicationDbContext, Guid>(Configuration);
             services.AddApplicationServices();
+            
+            services.AddHttpContextAccessor();
 
             services.AddTransient<ExceptionHandlingMiddleware>();
 
