@@ -21,3 +21,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Progress.API.dll"]
+
+FROM build AS test
+WORKDIR /app/test/Example.Service.UnitTest
+RUN dotnet test
