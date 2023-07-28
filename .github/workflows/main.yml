@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v3
     - name: Build the unit test Docker image
-      uses: actions/checkout@v3
       run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}}-test --target testrunner
 
     - name: Run unit tests
@@ -33,5 +33,4 @@ jobs:
           test-results/**/*.json
     
     - name: Build the Docker image
-      uses: actions/checkout@v3
       run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}} --target final
