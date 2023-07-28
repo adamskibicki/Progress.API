@@ -30,7 +30,7 @@ jobs:
       if: success() || failure()
       with:
         name: Unit Tests
-        path: test-results/**/*.trx
+        path: /test-results/**/*.trx
         reporter: dotnet-trx
         
     - name: Publish Test Results
