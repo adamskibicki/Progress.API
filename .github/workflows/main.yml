@@ -22,7 +22,8 @@ jobs:
         id=$(docker create progress-api:${{github.run_number}}-test)
         docker start $id -a
         sudo mkdir -p /test-results/progress-api
-        docker cp -r $id:/TestResults/ - > /test-results/progress-api
+        cd /test-results/progress-api
+        docker cp $id:/TestResults/ .
         
     - name: Test Report
       uses: dorny/test-reporter@v1
