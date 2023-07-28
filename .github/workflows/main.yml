@@ -7,6 +7,16 @@ on:
     branches: [ "main" ]
 
 jobs:
+  
+  test:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}}-test --target testrunner
+  #       TODO: copy test results from container to host then run reporter and publish actions
 
   build:
 
@@ -15,5 +25,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}}
-#       TODO: copy test results from container to host then run reporter and publish actions
+      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}} --target final
