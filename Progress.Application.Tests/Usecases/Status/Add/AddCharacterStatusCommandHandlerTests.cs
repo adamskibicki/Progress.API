@@ -523,5 +523,16 @@ namespace Progress.Application.Tests.Usecases.Status.Add
             var skillEntity = dbContext.Skills.Single();
             skillEntity.Variables[0].AffectedStats.Count.Should().Be(2);
         }
+
+        [Fact]
+        public void MethodName_WithWhat_ShouldDoWhat()
+        {
+            // Arrange
+            
+            // Act
+
+            // Assert
+            Assert.True(false);
+        }
     }
 }
