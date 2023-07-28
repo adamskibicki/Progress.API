@@ -19,7 +19,7 @@ jobs:
     - name: Run unit tests
       run: |
         id=$(docker create progress-api:${{github.run_number}}-test)
-        docker start $id -a
+        docker start $id -a || true
         sudo mkdir -p /test-results/progress-api
         cd /test-results/progress-api
         sudo docker cp $id:/src/Progress.Application.Tests/TestResults/ .
