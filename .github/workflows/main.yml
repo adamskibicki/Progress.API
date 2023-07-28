@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-
+    permissions: write-all
     runs-on: ubuntu-latest
 
     steps:
@@ -32,14 +32,13 @@ jobs:
         name: Unit Tests
         path: /test-results/**/*.trx
         reporter: dotnet-trx
-        token: ${{ github.token }}
         
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
         files: |
-          test-results/**/*.trx
+          /test-results/**/*.trx
     
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}} --target final
