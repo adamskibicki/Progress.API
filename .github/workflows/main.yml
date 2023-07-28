@@ -21,7 +21,7 @@ jobs:
       run: |
         id=$(docker create progress-api:${{github.run_number}}-test)
         docker start $id -a
-        docker cp $id:/src/Progress.Application.Tests/TestResults/ - > test-results/progress-api/
+        docker cp $id:/TestResults/ - > test-results/progress-api/
         
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
