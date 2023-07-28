@@ -21,7 +21,7 @@ RUN dotnet restore "Progress.Application.Tests/Progress.Application.Tests.csproj
 COPY "Progress.Application.Tests/" "Progress.Application.Tests/"
 WORKDIR "/src/Progress.Application.Tests"
 RUN dotnet build "Progress.Application.Tests.csproj" -c Release
-ENTRYPOINT ["dotnet", "test", "--logger:trx"]
+RUN dotnet test --logger:trx
 
 FROM build AS publish
 RUN dotnet publish "Progress.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
