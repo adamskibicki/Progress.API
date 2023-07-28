@@ -9,10 +9,28 @@ on:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+    - name: Build the unit test Docker image
+      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}}-test --target testrunner
+
+    - name: Run unit tests
+      run: |
+        id=$(docker create progress-api:${{github.run_number}}-test)
+        docker start $id -a || true
+        sudo mkdir -p /test-results/progress-api
+        cd /test-results/progress-api
+        sudo docker cp $id:/src/Progress.Application.Tests/TestResults/ .
+        
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        name: Test Results Details
+        path: /test-results/**/*.trx
+        reporter: dotnet-trx
+    
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}} --target final
