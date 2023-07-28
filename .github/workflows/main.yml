@@ -23,7 +23,7 @@ jobs:
         docker start $id -a
         sudo mkdir -p /test-results/progress-api
         cd /test-results/progress-api
-        docker cp $id:/src/Progress.Application.Tests/TestResults/ .
+        sudo docker cp $id:/src/Progress.Application.Tests/TestResults/ .
         
     - name: Test Report
       uses: dorny/test-reporter@v1
