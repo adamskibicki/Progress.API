@@ -13,6 +13,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Build the unit test Docker image
+      uses: actions/checkout@v3
+      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}}-test --target testrunner
+
+    - name: Run unit tests
+      run: |
+        id=$(docker create progress-api:${{github.run_number}}-test)
+        docker start $id -a
+        docker cp $id:/src/Progress.Application.Tests/TestResults/ - > test-results/progress-api/
+        
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          test-results/**/*.xml
+          test-results/**/*.trx
+          test-results/**/*.json
+    
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}}
+      uses: actions/checkout@v3
+      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}} --target final
