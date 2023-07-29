@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the unit test Docker image
-      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}}-test --target testrunner
+      run: docker build . --file Progress.API/Dockerfile --tag progress-api:${{github.run_number}}-test --target testrunner
 
     - name: Run unit tests
       run: |
@@ -33,4 +33,4 @@ jobs:
         reporter: dotnet-trx
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag progress-api:${{github.run_number}} --target final
+      run: docker build . --file Progress.API/Dockerfile --tag progress-api:${{github.run_number}} --target final
