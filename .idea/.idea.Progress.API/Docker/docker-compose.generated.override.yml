@@ -1,0 +1,33 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  progress.api:
+    build:
+      context: "D:\\Adam Skibicki\\GIT-ROOT\\Progress\\Progress.API"
+      dockerfile: "/Progress.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "/riderDebugger/linux-x64/dotnet/dotnet"
+    - "/riderDebugger/JetBrains.Debugger.Worker.exe"
+    - "--mode=server"
+    - "--frontend-port=57100"
+    - "--backend-port=57300"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://+:443;http://+:80"
+      RIDER_DEBUGGER_LOG_DIR: "/riderLogs"
+      RESHARPER_LOG_CONF: "/riderLogsConf/backend-log.xml"
+    image: "progress.api:dev"
+    ports:
+    - "57000:57100"
+    - "57200:57300"
+    volumes:
+    - "C:\\Users\\adam-\\AppData\\Roaming\\ASP.NET\\Https:/root/.aspnet/https"
+    - "C:\\Users\\adam-\\AppData\\Roaming\\Microsoft\\UserSecrets:/root/.microsoft/usersecrets"
+    - "D:\\Adam Skibicki\\GIT-ROOT\\Progress\\Progress.API\\Progress.API:/app:rw"
+    - "C:\\Users\\adam-\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2023.1.4\\\
+      Linux64:/riderDebugger"
+    - "C:\\Users\\adam-\\AppData\\Local\\JetBrains\\Toolbox\\apps\\Rider\\ch-0\\231.9225.23/bin:/riderLogsConf"
+    - "C:\\Users\\adam-\\AppData\\Local\\JetBrains\\Rider2023.1\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2023_7_29_17_35_21:/riderLogs:rw"
+    working_dir: "/app"

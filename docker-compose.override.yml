@@ -8,6 +8,13 @@
       - 7119:443
       - 7118:80
   db:
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=<YourStrong!Passw0rd>
     ports:
       - 1433:1433
+    volumes:
+      - "E:/progress-api/db/data:/var/opt/mssql/data"
+      - "E:/progress-api/db/log:/var/opt/mssql/log"
+      - "E:/progress-api/db/secrets:/var/opt/mssql/secrets"
     image: mcr.microsoft.com/mssql/server:2022-CU6-ubuntu-20.04
