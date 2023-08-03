@@ -21,10 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IaC", "IaC", "{C82732CD-91E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1E1CDE53-59D9-4C18-85CC-7753C5A9F1D5}"
 	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		docker-compose.override.yml = docker-compose.override.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
