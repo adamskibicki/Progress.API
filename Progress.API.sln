@@ -7,16 +7,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progress.API", "Progress.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progress.Application", "Progress.Application\Progress.Application.csproj", "{0C92DCC3-3748-49FB-BC39-7F61D0353E1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Progress.Application.Tests", "Progress.Application.Tests\Progress.Application.Tests.csproj", "{0C45CE51-4BC4-4AFB-BCD9-115BE9D2A87E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progress.Application.Tests", "Progress.Application.Tests\Progress.Application.Tests.csproj", "{0C45CE51-4BC4-4AFB-BCD9-115BE9D2A87E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IaC", "IaC", "{C82732CD-91E3-43B0-8DC7-3972404E83D5}"
 	ProjectSection(SolutionItems) = preProject
-		IaC\main.bicep = IaC\main.bicep
-		IaC\webApp.bicep = IaC\webApp.bicep
-		IaC\main.dev.json = IaC\main.dev.json
 		IaC\keyVault.bicep = IaC\keyVault.bicep
 		IaC\keyVault.dev.json = IaC\keyVault.dev.json
+		IaC\main.bicep = IaC\main.bicep
+		IaC\main.dev.json = IaC\main.dev.json
 		IaC\storageAccount.bicep = IaC\storageAccount.bicep
+		IaC\webApp.bicep = IaC\webApp.bicep
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1E1CDE53-59D9-4C18-85CC-7753C5A9F1D5}"
@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8D4405A8-1DDA-484F-8B20-FCB8474D4E61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{0C45CE51-4BC4-4AFB-BCD9-115BE9D2A87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C45CE51-4BC4-4AFB-BCD9-115BE9D2A87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C45CE51-4BC4-4AFB-BCD9-115BE9D2A87E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D4405A8-1DDA-484F-8B20-FCB8474D4E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D4405A8-1DDA-484F-8B20-FCB8474D4E61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D4405A8-1DDA-484F-8B20-FCB8474D4E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D4405A8-1DDA-484F-8B20-FCB8474D4E61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

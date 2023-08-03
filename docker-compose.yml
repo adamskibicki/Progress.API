@@ -1,15 +1,8 @@
-﻿services:
+version: '3.4'
+
+services:
   progress.api:
-    image: progress.api:dev
+    image: ${DOCKER_REGISTRY-}progressapi
     build:
       context: .
-      dockerfile: /Progress.API/Dockerfile
-    ports:
-      - 7119:443
-      - 7118:80
-    depends_on:
-      - db
-  db:
-    image: mcr.microsoft.com/mssql/server:2022-CU6-ubuntu-20.04
-    ports:
-      - 1433:1433
+      dockerfile: Progress.API/Dockerfile
