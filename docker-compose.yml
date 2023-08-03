@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  progress.api:
+    image: ${DOCKER_REGISTRY-}progressapi
+    build:
+      context: .
+      dockerfile: Progress.API/Dockerfile
+    depends_on:
+      - db
+  db:
+    image: ${DOCKER_REGISTRY-}progressapi_db
+    build:
+      context: ./Progress.Application/Persistence
+      dockerfile: Dockerfile

@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  progress.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - 7119:443
+      - 7118:80
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  db:
+    ports:
+      - 1433:1433
+    volumes:
+      - "E:/progress-api/db/data:/var/opt/mssql/data"
+      - "E:/progress-api/db/log:/var/opt/mssql/log"
+      - "E:/progress-api/db/secrets:/var/opt/mssql/secrets"
