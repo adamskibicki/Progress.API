@@ -1,0 +1,35 @@
+# This is a generated file. Not intended for manual editing.
+version: "3.4"
+services:
+  progress.api:
+    build:
+      context: "D:\\Adam Skibicki\\GIT-ROOT\\Progress\\Progress.API"
+      dockerfile: "Progress.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "/riderDebugger/linux-x64/dotnet/dotnet"
+    - "/riderDebugger/JetBrains.Debugger.Worker.exe"
+    - "--mode=server"
+    - "--frontend-port=57100"
+    - "--backend-port=57300"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      NUGET_PACKAGES: "C:\\Users\\adam-\\.nuget\\packages"
+      NUGET_FALLBACK_PACKAGES: "C:\\Users\\adam-\\.nuget\\packages"
+      RIDER_DEBUGGER_LOG_DIR: "/riderLogs"
+      RESHARPER_LOG_CONF: "/riderLogsConf/backend-log.xml"
+    image: "progressapi:dev"
+    ports:
+    - "127.0.0.1:57000:57100"
+    - "127.0.0.1:57200:57300"
+    volumes:
+    - "C:\\Users\\adam-\\.nuget\\packages:/root/.nuget/fallbackpackages"
+    - "D:\\Adam Skibicki\\GIT-ROOT\\Progress\\Progress.API\\Progress.API:/app:rw"
+    - "D:\\Adam Skibicki\\GIT-ROOT\\Progress\\Progress.API:/src:rw"
+    - "C:\\Users\\adam-\\AppData\\Local\\JetBrains\\RiderRemoteDebugger\\2023.2\\\
+      Linux64:/riderDebugger"
+    - "C:\\Users\\adam-\\AppData\\Local\\JetBrains\\Toolbox\\apps\\Rider\\ch-0\\232.8660.212/bin:/riderLogsConf"
+    - "C:\\Users\\adam-\\AppData\\Local\\JetBrains\\Rider2023.2\\log\\DebuggerWorker\\\
+      JetBrains.Debugger.Worker.2023_8_03_16_21_32:/riderLogs:rw"
+    working_dir: "/app"
