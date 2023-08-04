@@ -11,14 +11,14 @@ using Progress.Application.Usecases.UserCharacters.Get;
 
 namespace Progress.Application.Tests.Usecases.UserCharacters;
 
-public class UserCharactersQueryTests
+public class UserCharactersQueryHandlerTests
 {
     private readonly ApplicationDbContext dbContext;
     private readonly UserCharactersQueryHandler handler;
     private readonly Fixture fixture;
     private readonly Mock<ICurrentUser> currentUserMock;
 
-    public UserCharactersQueryTests()
+    public UserCharactersQueryHandlerTests()
     {
         fixture = TestHelpersFactory.CreateFixture();
         dbContext = TestHelpersFactory.CreateApplicationDbContext();

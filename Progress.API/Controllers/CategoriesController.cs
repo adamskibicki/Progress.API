@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Progress.API.Extensions;
-using Progress.Application.Usecases.Categories;
-using Progress.Application.Usecases.Status.Get;
+using Progress.Application.Usecases.Categories.Add;
+using Progress.Application.Usecases.Categories.Get;
 
 namespace Progress.API.Controllers
 {

@@ -7,5 +7,7 @@ namespace Progress.Application.Persistence.Entities
         public string Name { get; set; }
         public string DisplayColor { get; set; }
         public List<Skill> Skills { get; set; }
+        public User User { get; set; }
+        public Guid UserId { get; set; }
     }
 }

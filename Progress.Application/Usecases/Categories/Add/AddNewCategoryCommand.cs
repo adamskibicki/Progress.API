@@ -7,7 +7,7 @@ using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Status.Get;
 
-namespace Progress.Application.Usecases.Categories
+namespace Progress.Application.Usecases.Categories.Add
 {
     public class AddNewCategoryCommand : IRequest<Either<Failure, CategoryDto>>
     {

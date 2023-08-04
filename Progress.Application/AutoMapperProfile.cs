@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Progress.Application.Persistence.Entities;
 using Progress.Application.Usecases.Categories;
+using Progress.Application.Usecases.Categories.Add;
 using Progress.Application.Usecases.Status.Add;
 using Progress.Application.Usecases.Status.Get;
 using Progress.Application.Usecases.UserCharacters;
@@ -16,6 +17,8 @@ namespace Progress.Application
             CreateMap<Category, CategoryDto>();
             CreateMap<AddNewCategoryCommand, Category>()
                 .ForMember(c => c.Id, o => o.Ignore())
+                .ForMember(c => c.User, o => o.Ignore())
+                .ForMember(c => c.UserId, o => o.Ignore())
                 .ForMember(c => c.Skills, o => o.Ignore());
             CreateMap<Resource, ResourceDto>();
             CreateMap<BasicInformation, BasicInformationDto>();
