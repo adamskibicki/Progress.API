@@ -26,6 +26,8 @@ namespace Progress.Application.Security
 
             services.AddScoped<ITokenService, TokenService>();
 
+            services.AddScoped<ICurrentUser, CurrentUser>();
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
             services.AddAuthentication(options =>

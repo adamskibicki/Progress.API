@@ -10,12 +10,12 @@ namespace Progress.Application.Usecases.Status.Get
 {
     public record GetCharacterStatusQuery(Guid StatusId) : IRequest<Either<Failure, StatusDto>>;
 
-    public class GetStatusQueryHandler : ValidationRequestHandler<GetCharacterStatusQuery, StatusDto>
+    public class GetCharacterStatusQueryHandler : ValidationRequestHandler<GetCharacterStatusQuery, StatusDto>
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
 
-        public GetStatusQueryHandler(ApplicationDbContext dbContext, IMapper mapper,
+        public GetCharacterStatusQueryHandler(ApplicationDbContext dbContext, IMapper mapper,
             IEnumerable<IValidator<GetCharacterStatusQuery>> validators) : base(validators)
         {
             this.dbContext = dbContext;
