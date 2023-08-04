@@ -85,6 +85,7 @@ namespace Progress.Application.Persistence
             {
                 Id = testUserId,
                 Email = "test.test@test",
+                NormalizedEmail = "TEST.TEST@TEST",
                 UserName = "test",
                 EmailConfirmed = false,
                 NormalizedUserName = "TEST"
