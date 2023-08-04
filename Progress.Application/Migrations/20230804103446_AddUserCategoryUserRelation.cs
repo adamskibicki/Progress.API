@@ -23,7 +23,7 @@ namespace Progress.Application.Migrations
                 keyColumn: "Id",
                 keyValue: new Guid("0f9bb970-3723-ce3a-878f-0ba2c2a81d09"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash" },
-                values: new object[] { "8f76157b-edbc-4181-b43b-b16c4c163a2e", "AQAAAAEAACcQAAAAEKtfLjww3A1KAPxBykMwpjIhIO3XjRaZw6HNUqzoeErKi4W7kAv3W0fzGme9f75IXQ==" });
+                values: new object[] { "8e7bc669-d4a7-4122-bd65-bb0525a3c61c", "AQAAAAEAACcQAAAAELLMjIiFKuc+3Kj9jkb2LO04/8BLo377wFmfKztG6sRrlJ6Jb+l3ln3gmUwzS+Z4Xg==" });
 
             migrationBuilder.UpdateData(
                 table: "Categories",
@@ -141,7 +141,7 @@ namespace Progress.Application.Migrations
                 column: "UserId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />

@@ -2435,17 +2435,6 @@ namespace Progress.Application.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Progress.Application.Persistence.Entities.Category", b =>
-                {
-                    b.HasOne("Progress.Application.Persistence.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Progress.Application.Persistence.Entities.CharacterClass", b =>
                 {
                     b.HasOne("Progress.Application.Persistence.Entities.CharacterStatus", "CharacterStatus")
