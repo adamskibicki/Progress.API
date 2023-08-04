@@ -51,6 +51,12 @@ namespace Progress.Application.Persistence
                 .HasForeignKey(svs => svs.SkillVariableId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Category>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             var guidGenerator = new SeededGuidGenerator(1501381288);
             var skillVariableGuidGenerator = new SeededGuidGenerator(1501381288);

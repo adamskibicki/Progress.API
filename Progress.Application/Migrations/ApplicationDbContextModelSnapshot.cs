@@ -2322,13 +2322,13 @@ namespace Progress.Application.Migrations
                         {
                             Id = new Guid("0f9bb970-3723-ce3a-878f-0ba2c2a81d09"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8f76157b-edbc-4181-b43b-b16c4c163a2e",
+                            ConcurrencyStamp = "8e7bc669-d4a7-4122-bd65-bb0525a3c61c",
                             Email = "test.test@test",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST.TEST@TEST",
                             NormalizedUserName = "TEST",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKtfLjww3A1KAPxBykMwpjIhIO3XjRaZw6HNUqzoeErKi4W7kAv3W0fzGme9f75IXQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELLMjIiFKuc+3Kj9jkb2LO04/8BLo377wFmfKztG6sRrlJ6Jb+l3ln3gmUwzS+Z4Xg==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "test"
@@ -2422,6 +2422,17 @@ namespace Progress.Application.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Progress.Application.Persistence.Entities.Category", b =>
+                {
+                    b.HasOne("Progress.Application.Persistence.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Progress.Application.Persistence.Entities.Category", b =>
