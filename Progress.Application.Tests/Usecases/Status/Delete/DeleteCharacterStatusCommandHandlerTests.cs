@@ -41,9 +41,9 @@ namespace Progress.Application.Tests.Usecases.Status.Delete
             // Arrange
             var existingStatusId = Guid.NewGuid();
             await dbContext.CreateUserCharacterWithCharacterStatusThatHaveProvidedId(existingStatusId);
+            var command = new DeleteCharacterStatusCommand { Id = existingStatusId };
 
             // Act
-            var command = new DeleteCharacterStatusCommand { Id = existingStatusId };
 
             // Assert
             await Assert.ThrowsAsync<Exception>(async () => await handler.Handle(command, CancellationToken.None));
