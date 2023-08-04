@@ -1,6 +1,4 @@
-﻿using AutoFixture;
-using FluentValidation;
-using LanguageExt;
+﻿using FluentValidation;
 using Moq;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
@@ -9,23 +7,21 @@ using Progress.Application.Tests.Usecases.Common;
 using Progress.Application.Usecases.UserCharacters;
 using Progress.Application.Usecases.UserCharacters.Get;
 
-namespace Progress.Application.Tests.Usecases.UserCharacters;
+namespace Progress.Application.Tests.Usecases.UserCharacters.Get;
 
-public class UserCharactersQueryHandlerTests
+public class GetUserCharactersQueryHandlerTests
 {
     private readonly ApplicationDbContext dbContext;
-    private readonly UserCharactersQueryHandler handler;
-    private readonly Fixture fixture;
+    private readonly GetUserCharactersQueryHandler handler;
     private readonly Mock<ICurrentUser> currentUserMock;
 
-    public UserCharactersQueryHandlerTests()
+    public GetUserCharactersQueryHandlerTests()
     {
-        fixture = TestHelpersFactory.CreateFixture();
         dbContext = TestHelpersFactory.CreateApplicationDbContext();
         var mapper = TestHelpersFactory.CreateMapper();
         currentUserMock = new Mock<ICurrentUser>();
-        handler = new UserCharactersQueryHandler(dbContext, mapper, currentUserMock.Object,
-            new List<IValidator<UserCharactersQuery>>());
+        handler = new GetUserCharactersQueryHandler(dbContext, mapper, currentUserMock.Object,
+            new List<IValidator<GetUserCharactersQuery>>());
     }
 
     [Fact]
@@ -50,7 +46,7 @@ public class UserCharactersQueryHandlerTests
 
         currentUserMock.SetupGet(x => x.Id).Returns(user0.Id);
 
-        var query = new UserCharactersQuery();
+        var query = new GetUserCharactersQuery();
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);

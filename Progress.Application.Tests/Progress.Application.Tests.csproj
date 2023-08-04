@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Progress.Application\Progress.Application.csproj" />
+
   </ItemGroup>
 
 

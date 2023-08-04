@@ -2,15 +2,10 @@
 using FluentValidation;
 using LanguageExt;
 using MediatR;
-using Microsoft.IdentityModel.Tokens;
 using Progress.Application.Common;
 using Progress.Application.Persistence;
 using Progress.Application.Persistence.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Progress.Application.Security.Services;
 
 namespace Progress.Application.Usecases.UserCharacters.Add
 {
@@ -29,18 +24,23 @@ namespace Progress.Application.Usecases.UserCharacters.Add
         }
     }
 
-    public class AddUserCharacterCommandHandler : ValidationRequestHandler<AddUserCharacterCommand,UserCharacterResponseDto>
+    public class
+        AddUserCharacterCommandHandler : ValidationRequestHandler<AddUserCharacterCommand, UserCharacterResponseDto>
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
+        private readonly ICurrentUser currentUser;
 
-        public AddUserCharacterCommandHandler(ApplicationDbContext dbContext, IMapper mapper, IEnumerable<IValidator<AddUserCharacterCommand>> validators) : base(validators)
+        public AddUserCharacterCommandHandler(ApplicationDbContext dbContext, IMapper mapper, ICurrentUser currentUser,
+            IEnumerable<IValidator<AddUserCharacterCommand>> validators) : base(validators)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
+            this.currentUser = currentUser;
         }
 
-        protected override async Task<Either<Failure, UserCharacterResponseDto>> WrappedHandle(AddUserCharacterCommand request, CancellationToken cancellationToken)
+        protected override async Task<Either<Failure, UserCharacterResponseDto>> WrappedHandle(
+            AddUserCharacterCommand request, CancellationToken cancellationToken)
         {
             var characterStatus = new CharacterStatus
             {
@@ -54,7 +54,8 @@ namespace Progress.Application.Usecases.UserCharacters.Add
 
             var userCharacter = new UserCharacter
             {
-                CharacterStatuses = new List<CharacterStatus> { characterStatus }
+                CharacterStatuses = new List<CharacterStatus> { characterStatus },
+                UserId = currentUser.Id
             };
 
             dbContext.UserCharacters.Add(userCharacter);

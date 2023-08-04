@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Progress.API.Extensions;
-using Progress.Application.Usecases.UserCharacters;
 using Progress.Application.Usecases.UserCharacters.Add;
 using Progress.Application.Usecases.UserCharacters.Delete;
 using Progress.Application.Usecases.UserCharacters.Get;
@@ -22,7 +21,7 @@ namespace Progress.API.Controllers
 
         [Authorize]
         [HttpGet]
-        public Task<IActionResult> GetAsync([FromQuery] UserCharactersQuery query) =>
+        public Task<IActionResult> GetAsync([FromQuery] GetUserCharactersQuery query) =>
             mediator.Send(query).ToActionResult();
 
         [Authorize]
